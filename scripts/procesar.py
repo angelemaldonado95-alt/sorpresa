@@ -440,7 +440,10 @@ def main():
             "a": ano, "nombre": t["name"], "lg": t["lgID"], "div": t["divID"], "lugar": n(t["Rank"]),
             "g": n(t["G"]), "w": n(t["W"]), "l": n(t["L"]), "r": n(t["R"]), "ra": n(t["RA"]),
             "hr": n(t["HR"]), "era": t["ERA"], "parque": parque_es(t["park"] or ""), "asist": n(t["attendance"]),
-            "mgr": [{"id": m["playerID"], "n": nombre_mgr(m["playerID"]), "w": n(m["W"]), "l": n(m["L"])} for m in mgrs],
+            # Lahman registra también a quien dirigió uno o dos juegos por suspensión
+            # del mánager (Mattingly 2007, Bard 2018…); se marcan como interinos.
+            "mgr": [{"id": m["playerID"], "n": nombre_mgr(m["playerID"]), "w": n(m["W"]), "l": n(m["L"]),
+                     "interino": len(mgrs) > 1 and n(m["G"]) <= 5} for m in mgrs],
             "banderin": t["LgWin"] == "Y", "ws": t["WSWin"] == "Y", "div_gano": t["DivWin"] == "Y",
             "post": post, "lideres": lideres(ano, n(t["G"])),
         })
@@ -851,9 +854,13 @@ def main():
         r["id"] = cands[0] if len(cands) == 1 else None
         r["mgr"] = None
         if r["id"] in mgr_ids:
-            ms = [m for m in managers if m["playerID"] == r["id"]]
-            r["mgr"] = {"anos": sorted({m["yearID"] for m in ms}), "w": sum(n(m["W"]) for m in ms), "l": sum(n(m["L"]) for m in ms),
-                        "ws": sorted({m["yearID"] for m in ms if teams_ny[m["yearID"]]["WSWin"] == "Y"})}
+            por_ano_mgr = defaultdict(int)
+            for m in managers:
+                por_ano_mgr[m["yearID"]] += 1
+            ms = [m for m in managers if m["playerID"] == r["id"] and not (por_ano_mgr[m["yearID"]] > 1 and n(m["G"]) <= 5)]
+            if ms:
+                    r["mgr"] = {"anos": sorted({m["yearID"] for m in ms}), "w": sum(n(m["W"]) for m in ms), "l": sum(n(m["L"]) for m in ms),
+                            "ws": sorted({m["yearID"] for m in ms if teams_ny[m["yearID"]]["WSWin"] == "Y"})}
         if r["id"] and r["id"] not in jugadores and r["id"] in people:
             p = people[r["id"]]
             r["ficha"] = {"nac": [p["birthYear"], p["birthMonth"], p["birthDay"]],

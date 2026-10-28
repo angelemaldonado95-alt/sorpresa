@@ -288,6 +288,7 @@
     html += '<h3 class="mt-2">' + (t.mgr.length === 1 ? 'Mánager' : 'Mánagers') + '</h3><ul class="lista-limpia lista-mgr">' +
       t.mgr.map(function (m) {
         var nombre = m.id ? '<a href="' + U.enlaceJugador(m.id) + '">' + U.esc(m.n) + '</a>' : U.esc(m.n);
+        if (m.interino) nombre += ' <small>(interino)</small>';
         return '<li><span>' + nombre + '</span><span class="num">' + m.w + '-' + m.l + '</span></li>';
       }).join('') + '</ul>';
 
@@ -338,7 +339,7 @@
     { k: 'l', t: 'P', num: true, v: function (t) { return t.l; } },
     { k: 'pct', t: '%', num: true, v: pctNum },
     { k: 'lugar', t: 'Lugar', v: function (t) { return t.lugar; }, num: false, ordNum: true },
-    { k: 'mgr', t: 'Mánager', v: function (t) { return t.mgr.map(function (m) { return m.n; }).join(', '); } },
+    { k: 'mgr', t: 'Mánager', v: function (t) { return t.mgr.filter(function (m) { return !m.interino; }).map(function (m) { return m.n; }).join(', '); } },
     { k: 'post', t: 'Postemporada', v: function (t) { return t.ws ? 4 : (t.post.length ? ({ WS: 3, CS: 2, DS: 1, WC: 0.5 }[t.post[t.post.length - 1].tipo] || 0) : 0); }, ordNum: true }
   ];
   var orden = { k: 'a', desc: true };
@@ -368,7 +369,7 @@
         '<td class="num">' + t.w + '</td><td class="num">' + t.l + '</td>' +
         '<td class="num">' + U.pct(t.w, t.l) + '</td>' +
         '<td>' + U.esc(nombreLugarCorto(t)) + '</td>' +
-        '<td>' + U.esc(t.mgr.map(function (m) { return m.n; }).join(', ')) + '</td>' +
+        '<td>' + U.esc(t.mgr.filter(function (m) { return !m.interino; }).map(function (m) { return m.n; }).join(', ')) + '</td>' +
         '<td class="post">' + post + '</td></tr>';
     }).join('') + '</tbody>';
     tabla.innerHTML = cab + cuerpo;

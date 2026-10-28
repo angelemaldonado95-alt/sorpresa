@@ -75,7 +75,7 @@
     return p.nombre + ' ' + (p.gano ? 'ganada' : 'perdida') + ' ' + p.g + '-' + p.p + ' ante ' + p.rivalEs;
   }).join('; ') : 'sin postemporada';
   document.getElementById('ult-texto').textContent = 'Los ' + t.nombre.replace('New York ', '') + ' terminaron en ' + lugar + ' lugar de la División Este con ' +
-    t.w + ' victorias y ' + t.l + ' derrotas' + (t.mgr.length ? ', dirigidos por ' + t.mgr.map(function (m) { return m.n; }).join(' y ') : '') + '. Postemporada: ' + post + '.';
+    t.w + ' victorias y ' + t.l + ' derrotas' + (t.mgr.length ? ', dirigidos por ' + t.mgr.filter(function (m) { return !m.interino; }).map(function (m) { return m.n; }).join(' y ') : '') + '. Postemporada: ' + post + '.';
   document.getElementById('ult-enlace').href = u.enlaceTemporada(t.a);
 
   var ganadas = S.filter(function (s) { return s.gano; });

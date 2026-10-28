@@ -64,11 +64,11 @@
   // Mánager principal del año (el que dirigió más juegos).
   function mgrPrincipal(t) {
     var mejor = null;
-    (t.mgr || []).forEach(function (m) { if (m && m.n && (!mejor || (m.w + m.l) > (mejor.w + mejor.l))) mejor = m; });
+    (t.mgr || []).filter(function (m) { return !m.interino; }).forEach(function (m) { if (m && m.n && (!mejor || (m.w + m.l) > (mejor.w + mejor.l))) mejor = m; });
     return mejor;
   }
   var nombresMgr = [];
-  temporadas.forEach(function (t) { (t.mgr || []).forEach(function (m) { if (m && m.n && nombresMgr.indexOf(m.n) < 0) nombresMgr.push(m.n); }); });
+  temporadas.forEach(function (t) { (t.mgr || []).filter(function (m) { return !m.interino; }).forEach(function (m) { if (m && m.n && nombresMgr.indexOf(m.n) < 0) nombresMgr.push(m.n); }); });
 
   var CATEGORIAS = {
     hr: { q: 'jonrones', u: 'jonrones' }, rbi: { q: 'carreras impulsadas', u: 'carreras impulsadas' },
@@ -155,12 +155,13 @@
 
   // 3. ¿Quién fue el mánager en <año>?
   GEN.manager = function (nivel) {
-    var pool = temporadas.filter(function (t) { return t.mgr && t.mgr.length === 1 && t.mgr[0].n; });
+    var pool = temporadas.filter(function (t) { return t.mgr && t.mgr.filter(function (m) { return !m.interino; }).length === 1 && t.mgr[0].n; });
     if (nivel === 'novato') pool = pool.filter(function (t) { return t.ws; });
     if (nivel === 'leyenda') pool = temporadas.filter(function (t) { return mgrPrincipal(t); });
     var t = uno(pool);
     var m = mgrPrincipal(t);
-    var varios = t.mgr.length > 1;
+    var titulares = t.mgr.filter(function (m) { return !m.interino; });
+    var varios = titulares.length > 1;
     var otros = nombresMgr.filter(function (n) { return !t.mgr.some(function (x) { return x.n === n; }); });
     var dist = distractores(otros, m.n, 3);
     var exp = varios
