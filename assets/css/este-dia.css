@@ -1,0 +1,54 @@
+/* El Monumento — Sala «Este día en la historia».
+   Solo usa las variables de museo.css. */
+
+/* ---- navegación por fecha ---- */
+.fecha-nav-seccion { padding: 1.4rem 0; }
+.fecha-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.fecha-selector { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+.fecha-nav .boton { white-space: nowrap; }
+@media (max-width: 560px) {
+  .fecha-nav { flex-wrap: wrap; }
+  .fecha-selector { order: -1; width: 100%; }
+  .fecha-nav > .boton { flex: 1; justify-content: center; }
+  .fecha-nav-txt { display: none; }
+}
+
+/* ---- encabezado de la fecha ---- */
+#dia h2 { font-size: clamp(2rem, 5vw, 3.4rem); margin-bottom: 0.3em; }
+.dia-record { color: var(--tinta-suave); max-width: 60ch; margin-bottom: 2rem; }
+.dia-record .num { color: var(--tinta); }
+
+/* ---- efeméride principal ---- */
+.destacado { border-top: 1px solid var(--linea-fuerte); border-bottom: 1px solid var(--linea); padding: 1.8rem 0 1.6rem; margin-bottom: 2rem; }
+.destacado .meta { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+.destacado .ano { font-family: var(--mono); font-size: 0.95rem; color: var(--tinta-suave); }
+.destacado .texto { font-family: var(--serif); font-size: clamp(1.35rem, 2.6vw, 1.9rem); line-height: 1.3; max-width: 32ch; margin: 0 0 0.6rem; }
+.destacado:empty { display: none; }
+
+/* ---- lista cronológica ---- */
+.cronologia { list-style: none; margin: 0; padding: 0; }
+.cronologia li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.3rem 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--linea); align-items: baseline; }
+.cronologia .ano { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--tinta-suave); font-size: 0.95rem; }
+.cronologia .cuerpo { min-width: 0; }
+.cronologia .texto { margin: 0.2rem 0 0; }
+.cronologia .chip { vertical-align: 1px; }
+.enlace-jugador { font-size: 0.85rem; color: var(--tinta-suave); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--linea-fuerte); }
+.enlace-jugador:hover { color: var(--tinta); }
+@media (max-width: 480px) {
+  .cronologia li { grid-template-columns: 1fr; gap: 0.15rem; }
+}
+
+/* ---- «También en esta fecha» ---- */
+.tambien { margin-top: 1.5rem; }
+.tambien:not([data-n]) { display: none; }
+.tambien summary { cursor: pointer; font-family: var(--serif); font-size: 1.15rem; padding: 0.6rem 0; list-style: none; display: flex; align-items: baseline; gap: 0.6rem; }
+.tambien summary::-webkit-details-marker { display: none; }
+.tambien summary::before { content: "+"; font-family: var(--mono); color: var(--tinta-leve); width: 1rem; }
+.tambien[open] summary::before { content: "−"; }
+.tambien summary .peq { font-family: var(--sans); }
+.tambien .cronologia { border-top: 1px solid var(--linea); }
+.tambien .cronologia li { padding: 0.6rem 0; }
+
+/* ---- tabla de juegos sin hit ---- */
+#tabla-sin-hit td:first-child { white-space: nowrap; }
+#tabla-sin-hit .ws td { font-weight: 600; }

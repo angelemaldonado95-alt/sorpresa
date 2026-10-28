@@ -90,6 +90,14 @@ def fecha_larga(f):
     return f"{f.day} de {MESES[f.month - 1]} de {f.year}"
 
 
+def lugar_texto(p):
+    """Ciudad, estado, país; omite el estado si repite el país (Lahman: 'Panamá, Panama')."""
+    partes = [p.get("birthCity"), p.get("birthState"), p.get("birthCountry")]
+    if partes[1] and partes[2] and normaliza(partes[1]) == normaliza(partes[2]):
+        partes[1] = None
+    return ", ".join(x for x in partes if x)
+
+
 def miles(x):
     return f"{x:,}".replace(",", " ")
 
@@ -344,7 +352,7 @@ def main():
             nom = nombre(pid)
             nac = [p["birthYear"], p["birthMonth"], p["birthDay"]] if p.get("birthYear") else None
             mue = [p["deathYear"], p["deathMonth"], p["deathDay"]] if p.get("deathYear") else None
-            lugar = ", ".join(x for x in [p.get("birthCity"), p.get("birthState"), p.get("birthCountry")] if x)
+            lugar = lugar_texto(p)
             debut, final, bats, throws = p.get("debut"), p.get("finalGame"), p.get("bats"), p.get("throws")
         else:
             e = extra_api.get(pid, {})
@@ -833,7 +841,7 @@ def main():
             p = people[r["id"]]
             r["ficha"] = {"nac": [p["birthYear"], p["birthMonth"], p["birthDay"]],
                           "mue": [p["deathYear"], p["deathMonth"], p["deathDay"]] if p.get("deathYear") else None,
-                          "lugar": ", ".join(x for x in [p.get("birthCity"), p.get("birthState"), p.get("birthCountry")] if x),
+                          "lugar": lugar_texto(p),
                           "hof": salon.get(r["id"], [None])[0]}
 
     # ------------------------------------------------ meta

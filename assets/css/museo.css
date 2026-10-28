@@ -188,4 +188,5 @@ input.campo { width: 100%; }
 .centrado { text-align: center; }
 .mt-1 { margin-top: 1rem; } .mt-2 { margin-top: 2rem; } .mt-3 { margin-top: 3rem; }
 .mb-1 { margin-bottom: 1rem; } .mb-2 { margin-bottom: 2rem; }
-@media (max-width: 640px) { :root { --gutter: 16px; } body { font-size: 15px; } .seccion { padding: 2rem 0; } .sala-cabeza { padding: 2rem 0 1.5rem; } }
+@media (max-width: 640px) { .cabecera .marca small { display: none; } .cabecera .contenedor { gap: 0.8rem; } .marca { font-size: 1.15rem; }
+  :root { --gutter: 16px; } body { font-size: 15px; } .seccion { padding: 2rem 0; } .sala-cabeza { padding: 2rem 0 1.5rem; } }
