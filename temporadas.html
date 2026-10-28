@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las temporadas — El Monumento</title>
+<link rel="stylesheet" href="assets/css/museo.css">
+<link rel="stylesheet" href="assets/css/temporadas.css">
+<script src="data/meta.js"></script>
+<script src="data/temporadas.js"></script>
+<script src="data/jugadores.js"></script>
+<script src="assets/js/comun.js"></script>
+</head>
+<body>
+<!-- comun.js inserta la cabecera con navegación y botón de tema al cargar -->
+<main>
+  <section class="sala-cabeza"><div class="contenedor">
+    <p class="sobre">Sala 1</p>
+    <h1>Las temporadas</h1>
+    <p class="intro" id="intro-texto">Ciento veinticuatro campañas, de los Highlanders de 1903 a la temporada más reciente: el récord de cada año, su lugar en la liga, sus líderes y lo que pasó en octubre.</p>
+  </div></section>
+
+  <!-- 1. Línea de tiempo -->
+  <section class="seccion seccion-linea"><div class="contenedor">
+    <h2>Porcentaje de victorias, 1903–2026</h2>
+    <p class="peq">Pasa el cursor o toca la gráfica para ver cada temporada; haz clic para abrir su ficha.</p>
+    <figure class="linea-tiempo" id="linea-tiempo">
+      <div class="linea-lienzo" id="linea-lienzo">
+        <svg id="linea-svg" role="img" aria-labelledby="linea-titulo"><title id="linea-titulo">Porcentaje de victorias de los Yankees por temporada, 1903 a 2026</title></svg>
+        <div class="linea-tooltip oculto" id="linea-tooltip" role="status" aria-live="polite"></div>
+      </div>
+      <figcaption class="linea-leyenda" id="linea-leyenda">
+        <span><svg class="ley-icono" viewBox="0 0 24 12" aria-hidden="true"><path class="ley-linea" d="M1 6h22"/></svg> Porcentaje de victorias</span>
+        <span><svg class="ley-icono" viewBox="0 0 24 12" aria-hidden="true"><path class="ley-500" d="M1 6h22"/></svg> Nivel de .500</span>
+        <span><svg class="ley-icono" viewBox="0 0 24 12" aria-hidden="true"><circle class="ley-ws" cx="12" cy="6" r="4"/></svg> Serie Mundial ganada</span>
+        <span><svg class="ley-icono" viewBox="0 0 24 12" aria-hidden="true"><circle class="ley-band" cx="12" cy="6" r="3.5"/></svg> Banderín sin título</span>
+      </figcaption>
+    </figure>
+
+    <nav class="navegador-anos" aria-label="Elegir temporada">
+      <div class="decadas" id="decadas"></div>
+      <div class="anos-decada" id="anos-decada"></div>
+      <label class="selector-ano">
+        <span class="etiqueta-sobre">Ir a la temporada</span>
+        <select class="campo" id="selector-ano"></select>
+      </label>
+    </nav>
+  </div></section>
+
+  <!-- 2. Detalle de temporada -->
+  <section class="seccion seccion-detalle" id="detalle"><div class="contenedor">
+    <div id="detalle-contenido"></div>
+  </div></section>
+
+  <!-- 3. Tabla completa -->
+  <section class="seccion seccion-tabla"><div class="contenedor">
+    <h2>Todas las temporadas</h2>
+    <p class="peq">Haz clic en el encabezado de una columna para ordenar. Las temporadas con título llevan la marca «Serie Mundial».</p>
+    <div class="tabla-scroll">
+      <table class="tabla tabla-temporadas" id="tabla-temporadas"></table>
+    </div>
+  </div></section>
+</main>
+<script src="assets/js/temporadas.js"></script>
+</body>
+</html>

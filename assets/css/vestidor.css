@@ -1,0 +1,74 @@
+/* El Monumento — Sala «El vestidor» (trivia).
+   Niveles, pregunta en curso, veredicto y resumen. Solo variables de museo.css. */
+
+/* ---- niveles ---- */
+.niveles-lista {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--linea);
+  border: 1px solid var(--linea);
+}
+.nivel { background: var(--papel-2); padding: 1.4rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.nivel h3 { font-size: 1.6rem; margin-bottom: 0.1em; }
+.nivel .descripcion { color: var(--tinta-suave); margin: 0 0 0.8rem; min-height: 3.2em; }
+.nivel .record { margin: 0 0 1.2rem; font-size: 0.9rem; color: var(--tinta-suave); display: flex; flex-direction: column; gap: 0.15rem; }
+.nivel .record .marca-nivel { color: var(--tinta-suave); }
+.nivel .record .num { color: var(--tinta); font-size: 1.05rem; }
+.nivel .boton { align-self: flex-start; margin-top: auto; }
+@media (max-width: 760px) {
+  .niveles-lista { grid-template-columns: 1fr; }
+  .nivel .descripcion { min-height: 0; }
+}
+
+/* ---- partida ---- */
+.progreso { display: flex; gap: 1.5rem; flex-wrap: wrap; padding-bottom: 0.8rem; border-bottom: 1px solid var(--linea); margin-bottom: 1.8rem; }
+.progreso .num { color: var(--tinta); font-size: 0.85rem; }
+.pregunta { max-width: 760px; }
+.enunciado { font-size: clamp(1.45rem, 3vw, 2rem); margin-bottom: 1.4rem; max-width: 30ch; outline: none; }
+.opciones { display: grid; gap: 0.6rem; margin-bottom: 1.6rem; }
+.opcion {
+  display: flex; align-items: center; gap: 1rem; width: 100%; text-align: left;
+  padding: 0.8rem 1rem; background: var(--papel-2); border: 1px solid var(--linea-fuerte); border-radius: 3px;
+  cursor: pointer; font-size: 1rem; line-height: 1.35; color: var(--tinta);
+}
+.opcion:hover:not(:disabled) { border-color: var(--tinta-suave); background: var(--raya); }
+.opcion:disabled { cursor: default; }
+.opcion .tecla {
+  flex: 0 0 auto; width: 1.7rem; height: 1.7rem; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--linea); border-radius: 2px; font-size: 0.78rem; color: var(--tinta-leve);
+}
+.opcion .texto { flex: 1; min-width: 0; }
+.opcion.correcta { border-color: var(--exito); box-shadow: inset 0 0 0 1px var(--exito); }
+.opcion.correcta .tecla { border-color: var(--exito); color: var(--exito); }
+.opcion.erronea { border-style: dashed; }
+.opcion.erronea .texto { text-decoration: line-through; text-decoration-color: var(--tinta-leve); color: var(--tinta-suave); }
+.opcion:disabled:not(.correcta):not(.erronea) { opacity: 0.55; }
+
+.veredicto:empty { display: none; }
+.veredicto { border-top: 1px solid var(--linea-fuerte); padding-top: 1.2rem; }
+.veredicto .resultado { font-family: var(--serif); font-size: 1.2rem; margin-bottom: 0.4rem; }
+.veredicto .resultado.bien { color: var(--exito); }
+.veredicto .explicacion { max-width: 62ch; margin-bottom: 0.4rem; }
+.veredicto .fuente { margin: 0 0 1.2rem; }
+.veredicto .fuente a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--linea-fuerte); }
+.ayuda { margin-top: 1.5rem; color: var(--tinta-leve); }
+
+/* ---- resumen ---- */
+.marcador-final { font-size: clamp(2.4rem, 6vw, 4rem); margin-bottom: 0.2em; }
+.marcador-final .num { font-size: 0.95em; }
+.resumen .frase, #resumen-contenido .frase { font-family: var(--serif); font-size: 1.25rem; color: var(--tinta-suave); margin-bottom: 0.3rem; }
+.repaso { border-top: 1px solid var(--linea); margin: 1.8rem 0 2rem; max-width: 760px; }
+.repaso li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.8rem; padding: 0.8rem 0; border-bottom: 1px solid var(--linea); align-items: baseline; }
+.repaso .indice { color: var(--tinta-leve); font-size: 0.85rem; }
+.repaso .q { margin: 0 0 0.15rem; }
+.repaso .a { margin: 0; font-size: 0.88rem; color: var(--tinta-suave); }
+.repaso li.bien .a { color: var(--exito); }
+.repaso li.mal .a { color: var(--tinta-suave); }
+.acciones-final { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
+@media (max-width: 480px) {
+  .progreso { gap: 0.8rem 1.2rem; }
+  .opcion { padding: 0.7rem 0.8rem; gap: 0.7rem; }
+  .acciones-final .boton { flex: 1; justify-content: center; }
+}

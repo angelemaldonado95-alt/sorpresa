@@ -1,0 +1,73 @@
+/* El Monumento — sala Monument Park
+   Placas sobrias que evocan bronce y granito solo con la paleta común. */
+
+/* ---- muro de placas ---- */
+.muro .etiqueta-sobre { margin-bottom: 1.2rem; }
+.placas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.9rem;
+}
+.placa {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.3rem 0.8rem 1rem;
+  background: var(--papel-2);
+  color: var(--tinta);
+  border: 1px solid var(--linea-fuerte);
+  /* doble filete interior, como el borde grabado de una placa */
+  box-shadow: inset 0 0 0 4px var(--papel-2), inset 0 0 0 5px var(--linea), var(--sombra);
+  cursor: pointer;
+  font: inherit;
+  width: 100%;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.placa:hover { border-color: var(--tinta-suave); text-decoration: none; transform: translateY(-1px); }
+.placa[aria-pressed="true"] { border-color: var(--oro); box-shadow: inset 0 0 0 4px var(--papel-2), inset 0 0 0 5px var(--oro), var(--sombra); }
+.placa .num-grande {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 3.2rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--marino);
+  margin-bottom: 0.55rem;
+}
+:root[data-theme="dark"] .placa .num-grande { color: var(--acento); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .placa .num-grande { color: var(--acento); } }
+.placa .nombre { font-family: var(--serif); font-size: 0.98rem; line-height: 1.2; }
+.placa .retiro { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinta-leve); margin-top: 0.45rem; }
+.placa .retiro::before { content: ''; display: block; width: 22px; height: 1px; background: var(--oro); margin: 0 auto 0.45rem; opacity: 0.8; }
+.placa.toda-mlb .retiro { color: var(--oro); }
+
+/* ---- ficha de la leyenda ---- */
+.leyenda-vacia { color: var(--tinta-suave); max-width: 60ch; }
+.leyenda-cabeza { display: flex; align-items: flex-start; gap: 1.6rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
+.leyenda-cabeza .num-ficha {
+  font-family: var(--serif); font-size: clamp(3.4rem, 8vw, 5.2rem); line-height: 0.9; letter-spacing: -0.03em;
+  color: var(--marino); min-width: 2ch; text-align: center; padding: 0.4rem 0.3rem 0.2rem;
+  border-top: 1px solid var(--oro); border-bottom: 1px solid var(--oro);
+}
+:root[data-theme="dark"] .leyenda-cabeza .num-ficha { color: var(--acento); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .leyenda-cabeza .num-ficha { color: var(--acento); } }
+.leyenda-cabeza h2 { margin-bottom: 0.3rem; }
+.leyenda-cabeza .chips { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.leyenda-cabeza .titular { flex: 1; min-width: 220px; }
+.leyenda .datos { margin-bottom: 1.8rem; }
+.leyenda .dato .valor { font-size: 1.15rem; }
+.leyenda h3 { margin-top: 2rem; }
+.leyenda h3 .peq { font-family: var(--sans); font-weight: 400; margin-left: 0.5rem; }
+.leyenda .tabla { font-size: 0.84rem; white-space: nowrap; }
+.leyenda .tabla th, .leyenda .tabla td { padding: 0.4rem 0.5rem; }
+.leyenda .tabla td:first-child, .leyenda .tabla th:first-child { font-family: var(--mono); }
+.leyenda .tabla tfoot td { font-weight: 600; border-top: 1px solid var(--linea-fuerte); border-bottom: 0; }
+.leyenda .tabla tfoot td:first-child { font-family: var(--sans); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-leve); }
+.premios-lista { columns: 2; column-gap: 2rem; font-size: 0.92rem; }
+.premios-lista li { break-inside: avoid; padding: 0.25rem 0; border-bottom: 1px solid var(--linea); }
+.premios-lista .ano { font-family: var(--mono); color: var(--tinta-suave); margin-right: 0.6rem; }
+@media (max-width: 640px) { .premios-lista { columns: 1; } }
+.leyenda .acciones-ficha { margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
+.leyenda .nota { font-size: 0.86rem; color: var(--tinta-suave); max-width: 64ch; }

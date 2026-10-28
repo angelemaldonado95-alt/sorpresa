@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El vestidor — El Monumento</title>
+<link rel="stylesheet" href="assets/css/museo.css">
+<link rel="stylesheet" href="assets/css/vestidor.css">
+<script src="data/meta.js"></script>
+<script src="data/temporadas.js"></script>
+<script src="data/series.js"></script>
+<script src="data/jugadores.js"></script>
+<script src="data/retirados.js"></script>
+<script src="data/efemerides.js"></script>
+<script src="assets/js/comun.js"></script>
+</head>
+<body>
+<!-- comun.js inserta la cabecera con navegación y botón de tema al cargar -->
+<main>
+  <section class="sala-cabeza"><div class="contenedor">
+    <p class="sobre">Sala 6</p>
+    <h1>El vestidor</h1>
+    <p class="intro">La prueba de memoria del museo. Diez preguntas de opción múltiple que se arman al momento con los datos de las otras salas: títulos, récords, líderes, números retirados y juegos sin hit. Ninguna pregunta está escrita de antemano; cada partida es distinta.</p>
+  </div></section>
+
+  <!-- Elección de nivel (con la mejor marca guardada en este navegador) -->
+  <section class="seccion" id="niveles" aria-labelledby="niveles-titulo"><div class="contenedor">
+    <p class="etiqueta-sobre">Elige nivel</p>
+    <h2 id="niveles-titulo">Tres grados de exigencia</h2>
+    <div class="niveles-lista" id="niveles-lista"></div>
+  </div></section>
+
+  <!-- Partida en curso -->
+  <section class="seccion oculto" id="partida" aria-labelledby="partida-titulo"><div class="contenedor">
+    <h2 id="partida-titulo" class="sr-solo">Partida</h2>
+    <div class="progreso etiqueta-sobre" id="progreso" aria-live="polite"></div>
+    <div class="pregunta" id="pregunta"></div>
+  </div></section>
+
+  <!-- Resumen al terminar -->
+  <section class="seccion oculto" id="resumen" aria-live="polite"><div class="contenedor" id="resumen-contenido"></div></section>
+</main>
+<script src="assets/js/vestidor.js"></script>
+</body>
+</html>
