@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los 27 anillos — El Monumento</title>
+<link rel="stylesheet" href="assets/css/museo.css">
+<link rel="stylesheet" href="assets/css/anillos.css">
+<script src="data/meta.js"></script>
+<script src="data/series.js"></script>
+<script src="data/temporadas.js"></script>
+<script src="assets/js/comun.js"></script>
+</head>
+<body>
+<!-- comun.js inserta la cabecera con navegación y botón de tema al cargar -->
+<main>
+  <section class="sala-cabeza"><div class="contenedor">
+    <p class="sobre">Sala 2</p>
+    <h1>Los 27 anillos</h1>
+    <p class="intro" id="intro">Las Series Mundiales de los Yankees, una por una: los títulos, las series perdidas, cada juego con su línea de anotación y las figuras de cada octubre.</p>
+  </div></section>
+
+  <!-- Resumen general: se muestra cuando no hay serie elegida -->
+  <section class="seccion" id="resumen" aria-labelledby="resumen-titulo"><div class="contenedor">
+    <h2 id="resumen-titulo" class="sr-solo">Resumen</h2>
+    <div class="datos" id="resumen-datos"></div>
+  </div></section>
+
+  <!-- Detalle de una Serie Mundial (navegación por #año) -->
+  <section class="seccion oculto" id="detalle" aria-live="polite"><div class="contenedor" id="detalle-contenido"></div></section>
+
+  <!-- Galería de los 27 títulos -->
+  <section class="seccion" id="galeria"><div class="contenedor">
+    <p class="etiqueta-sobre">Galería</p>
+    <h2>Los 27 títulos</h2>
+    <p class="peq">Elige una pieza para ver la serie completa, juego por juego.</p>
+    <ol class="lista-limpia placas" id="placas"></ol>
+  </div></section>
+
+  <!-- Las 14 Series perdidas -->
+  <section class="seccion" id="perdidas"><div class="contenedor">
+    <p class="etiqueta-sobre">Aparte</p>
+    <h2>Las Series perdidas</h2>
+    <ol class="lista-limpia perdidas-lista" id="perdidas-lista"></ol>
+  </div></section>
+
+  <!-- Resumen por rival -->
+  <section class="seccion" id="rivales"><div class="contenedor">
+    <p class="etiqueta-sobre">Por rival</p>
+    <h2>Contra quién</h2>
+    <p class="peq" id="rivales-nota"></p>
+    <div class="tabla-scroll"><table class="tabla" id="rivales-tabla"></table></div>
+  </div></section>
+</main>
+<script src="assets/js/anillos.js"></script>
+</body>
+</html>

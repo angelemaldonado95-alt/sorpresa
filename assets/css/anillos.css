@@ -1,0 +1,114 @@
+/* El Monumento — sala «Los 27 anillos»
+   Placas de los títulos, lista de series perdidas, detalle juego por juego
+   y pizarrones de línea de anotación. Solo variables de museo.css. */
+
+/* ---- galería de títulos: placas con borde fino ---- */
+.placas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--linea);
+  border: 1px solid var(--linea);
+}
+.placa { background: var(--papel-2); }
+.placa a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1rem 1.1rem 0.9rem;
+  height: 100%;
+  border-left: 2px solid transparent;
+}
+.placa a:hover { text-decoration: none; background: var(--raya); }
+.placa.activa a { border-left-color: var(--oro); background: var(--raya); }
+.placa .ordinal { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tinta-leve); }
+.placa .ano { font-family: var(--serif); font-size: 1.7rem; line-height: 1.1; }
+.placa .rival { font-size: 0.82rem; color: var(--tinta-suave); line-height: 1.3; margin-top: 0.25rem; }
+.placa .marcador { font-family: var(--mono); font-size: 0.8rem; color: var(--tinta-leve); margin-top: 0.3rem; }
+
+/* ---- series perdidas: lista discreta ---- */
+.perdidas-lista { border-top: 1px solid var(--linea); }
+.perdidas-lista li { border-bottom: 1px solid var(--linea); }
+.perdidas-lista a {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr auto;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.55rem 0.4rem;
+  font-size: 0.92rem;
+  color: var(--tinta-suave);
+}
+.perdidas-lista a:hover { text-decoration: none; background: var(--raya); }
+.perdidas-lista li.activa a { color: var(--tinta); }
+.perdidas-lista .ano { font-family: var(--serif); font-size: 1.1rem; color: var(--tinta); }
+.perdidas-lista .marcador { font-family: var(--mono); font-size: 0.85rem; }
+
+/* ---- detalle de una serie ---- */
+.serie-nav { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
+.serie-nav .boton { white-space: nowrap; }
+.serie-encabezado h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); margin-bottom: 0.2em; }
+.serie-encabezado .resultado { font-family: var(--serif); font-size: 1.25rem; color: var(--tinta-suave); margin-bottom: 1.2rem; }
+.serie-encabezado .datos { margin-bottom: 2rem; }
+
+.cronica {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  line-height: 1.65;
+  max-width: 68ch;
+  margin: 0 0 2.5rem;
+  padding-left: 1.2rem;
+  border-left: 2px solid var(--linea-fuerte);
+}
+
+.mvp-nota { margin: 0 0 2rem; }
+.mvp-nota .chip { margin-right: 0.5rem; }
+
+.detalle h3 { margin-top: 2.4rem; }
+.detalle h3:first-of-type { margin-top: 0; }
+
+/* ---- juego por juego ---- */
+.tabla-juegos td.res { font-family: var(--serif); white-space: nowrap; }
+.tabla-juegos .perdido td.res { color: var(--tinta-suave); }
+.tabla-juegos .fecha { white-space: nowrap; }
+
+/* ---- pizarrones (línea de anotación) ---- */
+.pizarrones { display: grid; gap: 1rem; margin-top: 1rem; }
+.pizarron { background: var(--papel-2); border: 1px solid var(--linea); padding: 0.9rem 1rem 0.6rem; min-width: 0; }
+.pizarron .tabla-scroll { max-width: 100%; }
+.pizarron .pizarron-titulo { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: baseline; margin-bottom: 0.5rem; }
+.pizarron .pizarron-titulo strong { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; }
+.pizarron .pizarron-titulo .peq { margin: 0; }
+.linea { border-collapse: collapse; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.85rem; width: 100%; }
+.linea th, .linea td { padding: 0.3rem 0.45rem; text-align: center; border-bottom: 1px solid var(--linea); }
+.linea thead th { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-leve); font-weight: 500; border-bottom-color: var(--linea-fuerte); }
+.linea th.equipo, .linea td.equipo { text-align: left; font-family: var(--sans); font-weight: 500; white-space: nowrap; padding-left: 0; min-width: 7rem; }
+.linea td.equipo .peq { font-weight: 400; margin-left: 0.3rem; }
+.linea .total { border-left: 1px solid var(--linea-fuerte); font-weight: 500; }
+.linea td.x { color: var(--tinta-leve); }
+.linea tr.gano td.equipo { font-weight: 600; }
+.linea tbody tr:last-child td { border-bottom: 0; }
+.pizarron .pie-juego { font-size: 0.78rem; color: var(--tinta-suave); margin: 0.6rem 0 0; }
+
+/* ---- figuras ---- */
+.figuras .tabla td:first-child a { text-decoration: underline; text-decoration-color: var(--linea); text-underline-offset: 3px; }
+.figuras .tabla tr.mvp td:first-child::after { content: 'MVP'; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--oro); border: 1px solid var(--oro); padding: 0.05rem 0.3rem; margin-left: 0.5rem; vertical-align: middle; }
+
+/* ---- resumen por rival ---- */
+.rivales-anos { font-family: var(--mono); font-size: 0.78rem; color: var(--tinta-suave); }
+.rivales-anos .p { color: var(--tinta-leve); }
+
+@media (max-width: 640px) {
+  .placas { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .placa a { padding: 0.8rem 0.8rem 0.7rem; }
+  .placa .ano { font-size: 1.45rem; }
+  .perdidas-lista a { grid-template-columns: 3.4rem 1fr auto; gap: 0.6rem; font-size: 0.86rem; }
+  .cronica { font-size: 1.05rem; padding-left: 0.9rem; }
+  .serie-encabezado .datos { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* La tabla por rival se desplaza en lugar de partir nombres y años */
+#rivales-tabla td:first-child, .rivales-anos { white-space: nowrap; }
+.figuras { margin-top: 2.4rem; }
+.figuras .tabla td:first-child, .figuras .tabla td.num { white-space: nowrap; }
+.tabla-juegos td { white-space: nowrap; }
+.tabla-juegos td:nth-child(3) { white-space: normal; min-width: 9rem; }
