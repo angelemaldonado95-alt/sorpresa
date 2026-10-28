@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Franela — El Monumento</title>
+<meta name="description" content="Archivo de todos los jugadores que han vestido el uniforme de los Highlanders y Yankees de Nueva York, 1903–2026.">
+<link rel="stylesheet" href="css/franela.css">
+<script>
+  // Tema antes de pintar, para evitar el destello.
+  (function () {
+    try {
+      var t = localStorage.getItem('franela-tema');
+      if (t === 'claro' || t === 'oscuro') document.documentElement.setAttribute('data-tema', t);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+
+<header class="cabecera">
+  <div class="cabecera__fila">
+    <a class="cabecera__museo" href="../index.html">El Monumento</a>
+    <nav class="cabecera__acciones" aria-label="Preferencias">
+      <button type="button" class="boton-tema" id="boton-tema" aria-pressed="false">Modo oscuro</button>
+    </nav>
+  </div>
+  <h1 class="cabecera__titulo">La Franela</h1>
+  <p class="cabecera__lema">Todos los que han vestido el uniforme de los Highlanders y los Yankees de Nueva York, <span id="meta-temporadas">1903–2026</span>.</p>
+  <p class="cabecera__cifras" id="meta-cifras"></p>
+  <nav class="pestanas" aria-label="Salas">
+    <a href="#archivo" data-sala="archivo" class="pestana activa">Archivo</a>
+    <a href="#mapa" data-sala="mapa" class="pestana">Mapa</a>
+    <a href="#latina" data-sala="latina" class="pestana">Sala latina</a>
+    <a href="#numeros" data-sala="numeros" class="pestana">Números</a>
+    <a href="#fuentes" data-sala="fuentes" class="pestana">Fuentes</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ARCHIVO ------------------------------------------------------------ -->
+  <section id="archivo" class="sala" aria-labelledby="archivo-titulo">
+    <h2 id="archivo-titulo" class="sala__titulo">Archivo</h2>
+    <form class="buscador" id="buscador" autocomplete="off" onsubmit="return false">
+      <label class="buscador__campo buscador__campo--texto">
+        <span>Nombre</span>
+        <input type="search" id="q" placeholder="Mantle, Rivera, Loaiza…" aria-label="Buscar por nombre">
+      </label>
+      <label class="buscador__campo">
+        <span>Posición</span>
+        <select id="f-pos">
+          <option value="">Todas</option>
+          <option value="P">Pitcher</option>
+          <option value="C">Receptor</option>
+          <option value="1B">Primera base</option>
+          <option value="2B">Segunda base</option>
+          <option value="3B">Tercera base</option>
+          <option value="SS">Shortstop</option>
+          <option value="OF">Jardinero</option>
+          <option value="DH">Bateador designado</option>
+        </select>
+      </label>
+      <label class="buscador__campo">
+        <span>Década</span>
+        <select id="f-dec"><option value="">Todas</option></select>
+      </label>
+      <label class="buscador__campo buscador__campo--num">
+        <span>Número</span>
+        <input type="text" id="f-num" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="42" aria-label="Número de uniforme">
+      </label>
+      <label class="buscador__campo">
+        <span>Orden</span>
+        <select id="f-orden">
+          <option value="apellido">Apellido</option>
+          <option value="anio">Primer año</option>
+          <option value="juegos">Juegos con los Yankees</option>
+        </select>
+      </label>
+    </form>
+    <p class="resultado-cuenta" id="cuenta" aria-live="polite"></p>
+    <ol class="lista" id="lista"></ol>
+    <p class="mas"><button type="button" class="boton" id="mas" hidden>Mostrar más</button></p>
+  </section>
+
+  <!-- MAPA --------------------------------------------------------------- -->
+  <section id="mapa" class="sala" hidden aria-labelledby="mapa-titulo">
+    <h2 id="mapa-titulo" class="sala__titulo">De dónde vienen</h2>
+    <p class="sala__intro">Lugar de nacimiento de cada jugador. Filtra por década para ver cómo cambió el roster con los años. Los puntos huecos marcan un lugar aproximado (centro del estado o del país) cuando la ciudad no aparece en GeoNames.</p>
+    <div id="mapa-contenedor" class="mapa"></div>
+  </section>
+
+  <!-- SALA LATINA -------------------------------------------------------- -->
+  <section id="latina" class="sala" hidden aria-labelledby="latina-titulo">
+    <h2 id="latina-titulo" class="sala__titulo">Sala latina</h2>
+    <p class="sala__intro" id="latina-intro"></p>
+    <div id="latina-contenedor"></div>
+  </section>
+
+  <!-- NÚMEROS ------------------------------------------------------------ -->
+  <section id="numeros" class="sala" hidden aria-labelledby="numeros-titulo">
+    <h2 id="numeros-titulo" class="sala__titulo">Números del uniforme</h2>
+    <p class="sala__intro">Del 0 al 99: quién ha llevado cada número con los Yankees. Los Yankees empezaron a usar números en la espalda en 1929; la MLB Stats API los registra por temporada desde finales de los años noventa y, para épocas anteriores, sólo donde el número principal del jugador puede atribuirse sin duda al equipo. Si un número no aparece en las fuentes, no se muestra.</p>
+    <div id="numeros-contenedor"></div>
+  </section>
+
+  <!-- FUENTES ------------------------------------------------------------ -->
+  <section id="fuentes" class="sala" hidden aria-labelledby="fuentes-titulo">
+    <h2 id="fuentes-titulo" class="sala__titulo">Fuentes y método</h2>
+    <div class="prosa">
+      <p>Todo lo que aparece en esta sala sale de bases de datos públicas, descargadas y procesadas por <code>scripts/build.py</code>. Nada se escribió a mano: cuando un dato no está en las fuentes, el campo queda vacío.</p>
+      <dl class="fuentes">
+        <dt>SABR Lahman Baseball Database</dt>
+        <dd>Fichas biográficas (<em>People</em>), apariciones por posición (<em>Appearances</em>), bateo (<em>Batting</em>) y pitcheo (<em>Pitching</em>) de 1903 a 2025. Versión <span id="meta-lahman"></span>. <a href="https://sabr.org/lahman-database/" rel="noopener">sabr.org/lahman-database</a>. Licencia CC BY-SA 3.0.</dd>
+        <dt>Chadwick Baseball Bureau — Register</dt>
+        <dd>Cruce de identificadores entre Lahman/Baseball-Reference y MLB. <a href="https://github.com/chadwickbureau/register" rel="noopener">github.com/chadwickbureau/register</a>.</dd>
+        <dt>MLB Stats API</dt>
+        <dd>Temporada 2026 (bateo, pitcheo y posiciones), números de uniforme por temporada y por entrada de roster, número principal y lugar de nacimiento de quienes aún no tienen ficha en Lahman. <a href="https://statsapi.mlb.com/" rel="noopener">statsapi.mlb.com</a>, sin llave de acceso.</dd>
+        <dt>GeoNames</dt>
+        <dd>Coordenadas de las ciudades de nacimiento (<em>cities500</em>). <a href="https://www.geonames.org/" rel="noopener">geonames.org</a>. Licencia CC BY 4.0.</dd>
+        <dt>Natural Earth, vía world-atlas y us-atlas</dt>
+        <dd>Contornos del mapa base. Dominio público.</dd>
+      </dl>
+      <h3>Criterios</h3>
+      <ul>
+        <li>Cuenta como jugador de los Yankees quien aparece en al menos un juego con el equipo (Highlanders 1903–1912, Yankees desde 1913). Los números de carrera son sólo los acumulados con el equipo.</li>
+        <li>Posición principal: la que tiene más juegos con los Yankees. Jardineros de épocas antiguas sin desglose aparecen como «jardinero».</li>
+        <li>Un número de uniforme se atribuye sólo cuando la MLB Stats API lo liga al jugador con los Yankees (roster de una temporada, entrada de roster o roster histórico del equipo) o cuando el número principal del jugador corresponde a alguien que sólo jugó con los Yankees en Grandes Ligas. Por eso faltan números famosos de jugadores que pasaron por otros equipos antes de 1990.</li>
+        <li>Sala latina: jugadores nacidos en países de América Latina de habla española o portuguesa (incluido Puerto Rico). No incluye a jugadores de ascendencia latina nacidos en otros lugares, porque las fuentes no registran la ascendencia.</li>
+        <li>Mapa: la ciudad se ubica por nombre y país (y estado, en Estados Unidos) en GeoNames. Si no se encuentra, se usa el centro del estado o del país y el punto se dibuja hueco.</li>
+      </ul>
+      <p class="pie" id="meta-pie"></p>
+    </div>
+  </section>
+
+</main>
+
+<!-- FICHA DEL JUGADOR -------------------------------------------------------- -->
+<dialog id="ficha" class="ficha" aria-labelledby="ficha-nombre">
+  <div class="ficha__marco">
+    <button type="button" class="ficha__cerrar" id="ficha-cerrar" aria-label="Cerrar">Cerrar</button>
+    <div id="ficha-cuerpo"></div>
+  </div>
+</dialog>
+
+<footer class="pie-pagina">
+  <p>La Franela es un ala de <a href="../index.html">El Monumento</a>. Datos: SABR Lahman Database, Chadwick Register, MLB Stats API, GeoNames y Natural Earth. Sin afiliación con los New York Yankees ni con MLB.</p>
+</footer>
+
+<script src="data/meta.js"></script>
+<script src="data/players.js"></script>
+<script src="data/numbers.js"></script>
+<script src="data/world.js"></script>
+<script src="js/comun.js"></script>
+<script src="js/mapa.js"></script>
+<script src="js/numeros.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

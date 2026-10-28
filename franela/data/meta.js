@@ -1,0 +1,2 @@
+// Generado por scripts/build.py el 2026-10-28. No editar a mano.
+window.FRANELA_META = {"built":"2026-10-28","players":1855,"seasons":[1903,2026],"lahmanVersion":"2025 (publicada 2026-01-02, archivos CSV actualizados 2026-02-18)","numbersSince":1990,"countries":["AS","AU","AW","BS","CA","CN","CO","CU","CW","DE","DO","ES","GB","IE","IT","JM","JP","KR","MX","NI","NL","NO","PA","PR","TW","US","VE","VI"],"geo":{"ciudad":1704,"pais":32,"estado":118,"sin":1},"latam":218,"mex":18,"withNumbers":754};
