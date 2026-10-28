@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>El Simulador · Yankees 1903–2025</title>
+  <meta name="description" content="Juegos y series simulados entre cualquier par de equipos de los Yankees de la historia, con datos de la Lahman Baseball Database.">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el parpadeo.
+    (function () {
+      try {
+        var t = localStorage.getItem('simulador-tema');
+        if (t === 'oscuro' || t === 'claro') document.documentElement.classList.add(t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor">
+      <div class="cabecera-superior">
+        <a href="../index.html">← El Monumento</a>
+        <button type="button" class="boton discreto" id="boton-tema" aria-pressed="false">Modo oscuro</button>
+      </div>
+      <h1>El Simulador</h1>
+      <p class="subtitulo">Juegos y series entre cualquier par de Yankees de la historia, 1903–2025</p>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <section class="seccion" aria-labelledby="titulo-equipos">
+      <h2 id="titulo-equipos">Los equipos</h2>
+      <div class="columnas">
+        <div class="columna-equipo" id="equipo-A" data-lado="A"></div>
+        <div class="columna-equipo" id="equipo-B" data-lado="B"></div>
+      </div>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-simular">
+      <h2 id="titulo-simular">Simular</h2>
+      <div class="botonera">
+        <button type="button" class="boton principal" id="boton-juego">Simular un juego</button>
+        <button type="button" class="boton" id="boton-serie">Simular serie al mejor de 7</button>
+        <button type="button" class="boton" id="boton-mil">Simular 1,000 series</button>
+        <div class="semilla">
+          <label for="semilla">Semilla (opcional, para reproducir)</label>
+          <input type="number" id="semilla" inputmode="numeric" min="0" step="1" placeholder="al azar">
+        </div>
+      </div>
+      <p class="mensaje-error" id="mensaje-error" role="alert"></p>
+    </section>
+
+    <section class="seccion" id="seccion-resultado" aria-live="polite" hidden>
+      <h2 id="titulo-resultado">Resultado</h2>
+      <div id="resultado"></div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor">
+      <h2 class="visualmente-oculto">Método y créditos</h2>
+      <p>
+        Cada turno al bate se resuelve con las tasas reales de la temporada que registra la Lahman
+        Baseball Database: la probabilidad de cada resultado (hit sencillo, doble, triple, cuadrangular,
+        base por bolas, ponche, out en juego) combina la tasa del bateador con la del lanzador por el
+        método log5 (razón de momios), y ambas se normalizan por época al entorno promedio de la Liga
+        Americana 1903–2025, para que un bateador de 1930 y uno de 1968 se midan contra el mismo fondo.
+        Se modela la fatiga de los abridores y el relevo, los robos de base según las tasas de cada corredor
+        y los errores según la tasa de la defensa de cada equipo.
+      </p>
+      <p>
+        No se modela la ventaja de mano (zurdo contra derecho), el efecto de los parques, los bateadores
+        emergentes ni los cambios defensivos; Lahman no registra al bateador designado, así que en las
+        temporadas con DH se sugiere al mejor bate que no tiene posición. Los resultados son una
+        aproximación estadística, no una reconstrucción.
+      </p>
+      <p class="credito">Datos: SABR Lahman Baseball Database 2025 (<a href="https://sabr.org/lahman-database">sabr.org/lahman-database</a>).</p>
+    </div>
+  </footer>
+
+  <!-- Datos estáticos: índice de temporadas y entorno de liga. Las temporadas se cargan al elegirlas. -->
+  <script src="data/indice.js"></script>
+  <script src="data/liga.js"></script>
+  <script src="js/motor.js"></script>
+  <script src="js/narracion.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
