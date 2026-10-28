@@ -1,0 +1,97 @@
+/* El Monumento — Sala 1: Las temporadas.
+   Estilos propios de la sala: gráfica SVG, navegador de años, ficha y tabla. */
+
+/* ---- línea de tiempo ---- */
+.linea-tiempo { margin: 1.2rem 0 0; }
+.linea-lienzo { position: relative; }
+.linea-lienzo svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; cursor: crosshair; }
+
+.lt-rejilla { stroke: var(--linea); stroke-width: 1; }
+.lt-500 { stroke: var(--linea-fuerte); stroke-width: 1; stroke-dasharray: 4 4; }
+.lt-eje { stroke: var(--linea-fuerte); stroke-width: 1; }
+.lt-etiqueta { fill: var(--tinta-leve); font-family: var(--mono); font-size: 11px; }
+.lt-serie { fill: none; stroke: var(--acento); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.lt-ws { fill: var(--oro); stroke: var(--papel); stroke-width: 1.5; }
+.lt-band { fill: var(--papel); stroke: var(--oro); stroke-width: 1.3; opacity: 0.8; }
+.lt-cursor { stroke: var(--tinta-suave); stroke-width: 1; stroke-dasharray: 2 3; pointer-events: none; }
+.lt-punto { fill: var(--papel); stroke: var(--acento); stroke-width: 2; pointer-events: none; }
+.lt-actual { stroke: var(--oro); stroke-width: 1; opacity: 0.9; pointer-events: none; }
+.lt-actual-etq { fill: var(--oro); font-family: var(--mono); font-size: 11px; }
+.lt-captura { fill: transparent; }
+
+.linea-tooltip {
+  position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;
+  background: var(--papel-2); border: 1px solid var(--linea-fuerte); box-shadow: var(--sombra);
+  padding: 0.45rem 0.65rem; font-size: 0.8rem; line-height: 1.4; white-space: nowrap;
+  transform: translate(-50%, calc(-100% - 12px));
+}
+.linea-tooltip .tt-ano { font-family: var(--serif); font-size: 1rem; }
+.linea-tooltip .tt-rec { font-family: var(--mono); }
+.linea-tooltip .tt-res { color: var(--tinta-suave); }
+.linea-tooltip .tt-res.titulo { color: var(--oro); }
+
+.linea-leyenda { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; margin-top: 0.6rem; font-size: 0.78rem; color: var(--tinta-suave); }
+.linea-leyenda span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.ley-icono { width: 24px; height: 12px; flex: none; }
+.ley-linea { stroke: var(--acento); stroke-width: 2; }
+.ley-500 { stroke: var(--linea-fuerte); stroke-width: 1; stroke-dasharray: 4 4; }
+.ley-ws { fill: var(--oro); }
+.ley-band { fill: var(--papel); stroke: var(--oro); stroke-width: 1.3; }
+
+/* ---- navegador de años ---- */
+.navegador-anos { margin-top: 1.6rem; display: grid; grid-template-columns: 1fr auto; gap: 0.8rem 2rem; align-items: start; }
+.decadas { display: flex; flex-wrap: wrap; gap: 0.3rem; grid-column: 1; }
+.decadas button, .anos-decada a {
+  background: none; border: 1px solid var(--linea); border-radius: 2px; padding: 0.25rem 0.55rem;
+  font-family: var(--mono); font-size: 0.8rem; color: var(--tinta-suave); cursor: pointer; line-height: 1.3;
+}
+.decadas button:hover, .anos-decada a:hover { border-color: var(--tinta-suave); color: var(--tinta); text-decoration: none; }
+.decadas button[aria-pressed="true"] { background: var(--marino); color: #fff; border-color: var(--marino); }
+:root[data-theme="dark"] .decadas button[aria-pressed="true"] { background: var(--acento); color: var(--papel); border-color: var(--acento); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .decadas button[aria-pressed="true"] { background: var(--acento); color: var(--papel); border-color: var(--acento); } }
+.anos-decada { display: flex; flex-wrap: wrap; gap: 0.3rem; grid-column: 1; }
+.anos-decada a { position: relative; }
+.anos-decada a.ws { border-color: var(--oro); color: var(--oro); }
+.anos-decada a[aria-current="true"] { border-color: var(--tinta); color: var(--tinta); font-weight: 500; }
+.selector-ano { grid-column: 2; grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 0.3rem; }
+@media (max-width: 760px) {
+  .navegador-anos { grid-template-columns: 1fr; }
+  .selector-ano { grid-column: 1; grid-row: auto; }
+}
+
+/* ---- ficha de temporada ---- */
+.ficha-cabeza { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; margin-bottom: 1.4rem; }
+.ficha-cabeza h2 { margin: 0; }
+.ficha-cabeza .sobre { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tinta-leve); margin: 0 0 0.4rem; }
+.ficha-cabeza .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+.ficha-nav { display: flex; gap: 0.5rem; flex: none; }
+.seccion-detalle .dato .valor.texto { font-family: var(--sans); font-size: 1.05rem; line-height: 1.35; padding-top: 0.2rem; }
+.seccion-detalle .dato .valor.texto .num { font-size: 1.05rem; }
+.ficha-cuerpo { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 3rem; margin-top: 2rem; }
+@media (max-width: 760px) { .ficha-cuerpo { grid-template-columns: 1fr; gap: 1.6rem; } }
+.ficha-cuerpo h3 { font-size: 1.05rem; margin-bottom: 0.6rem; }
+.ficha-cuerpo .tabla { font-size: 0.88rem; }
+.ficha-cuerpo .tabla td:first-child { color: var(--tinta-leve); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; width: 1%; }
+.ficha-cuerpo .tabla td.num { white-space: nowrap; }
+.lista-mgr li, .lista-post li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--linea); }
+.lista-mgr li:last-child, .lista-post li:last-child { border-bottom: 0; }
+.lista-post .ronda { color: var(--tinta-leve); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; display: block; }
+.lista-post .marcador { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lista-post .gano .marcador { color: var(--exito); }
+.enlace-anillo { margin-top: 1rem; }
+.nota-vacia { color: var(--tinta-suave); margin: 0; }
+
+/* ---- tabla completa ---- */
+.tabla-temporadas th.ordenable { cursor: pointer; user-select: none; }
+.tabla-temporadas th.ordenable:hover { color: var(--tinta); }
+.tabla-temporadas th[aria-sort="ascending"], .tabla-temporadas th[aria-sort="descending"] { color: var(--tinta); }
+.tabla-temporadas th .flecha { display: inline-block; width: 0.8em; color: var(--tinta-leve); }
+.tabla-temporadas tr.titulo td { background: color-mix(in srgb, var(--oro) 7%, transparent); }
+.tabla-temporadas tr.titulo td:first-child { box-shadow: inset 2px 0 0 var(--oro); }
+.tabla-temporadas td.ano a { font-family: var(--mono); font-weight: 500; }
+.tabla-temporadas td.post, .tabla-temporadas td.equipo { white-space: nowrap; }
+.tabla-temporadas .chip { font-size: 0.66rem; padding: 0.1rem 0.4rem; }
+@media (max-width: 640px) {
+  .tabla-temporadas { font-size: 0.82rem; }
+  .tabla-temporadas th, .tabla-temporadas td { padding: 0.4rem 0.45rem; }
+}

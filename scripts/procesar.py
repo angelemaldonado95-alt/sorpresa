@@ -520,6 +520,21 @@ def main():
             if j and int(j["fecha"][:4]) >= PRIMER_ANO:
                 post_logs.append(j)
 
+    # Parque principal de cada temporada según Retrosheet (los nombres de Lahman
+    # son inconsistentes entre años para el Yankee Stadium).
+    parque_ano = defaultdict(lambda: defaultdict(int))
+    for j in juegos:
+        if j["local"]:
+            parque_ano[int(j["fecha"][:4])][j["parque"]] += 1
+    for t in temporadas:
+        if t["a"] in parque_ano:
+            clave = max(parque_ano[t["a"]], key=parque_ano[t["a"]].get)
+            t["parque"] = parque_es(parks.get(clave, t["parque"]))
+    ultimo_parque = temporadas[ULTIMO_LAHMAN - PRIMER_ANO]["parque"]
+    for t in temporadas:
+        if t.get("fuente") == "statsapi":
+            t["parque"] = ultimo_parque
+
     # ------------------------------------------------ Series Mundiales
     print("Series Mundiales…")
     mvps_ws = {r["yearID"]: r["playerID"] for r in awards if r["awardID"] == "World Series MVP"}
