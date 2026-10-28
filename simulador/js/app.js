@@ -437,7 +437,8 @@
       if (j.tipo === 'INICIO_ENTRADA') {
         entradaActual = clave;
         items.push(el('li', { clase: 'encabezado' }, [
-          el('span', { texto: (j.alta ? 'Alta de la ' : 'Baja de la ') + ordinalEntrada(j.entrada) + (f.texto ? ' — ' + f.texto : '') }),
+          // Si la narración ya trae la frase de apertura («Alta de la primera. …»), se usa como encabezado.
+          el('span', { texto: f.texto || ((j.alta ? 'Alta de la ' : 'Baja de la ') + ordinalEntrada(j.entrada)) }),
           el('span', { clase: 'marcador', texto: marcadorTexto(j.marcador, juego) })
         ]));
         return;
