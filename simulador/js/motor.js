@@ -70,27 +70,42 @@ var SimMotor = (function () {
     PA_PLENO: 120,
     BF_PLENO: 150,            // lo mismo para lanzadores, en BF
 
-    // Reparto del out en juego (bola bateada que fue out).
-    FRAC_ROLA: 0.50,
-    FRAC_ELEVADO: 0.38,
-    FRAC_LINEA: 0.12,
+    // Reparto del out en juego (bola bateada que fue out): rola / elevado
+    // (incluye globos al cuadro, ver FRAC_ELEVADO_INFIELD) / línea. Cifras
+    // redondeadas del reparto típico de outs por tipo de batazo.
+    FRAC_ROLA: 0.43,
+    FRAC_ELEVADO: 0.47,
+    FRAC_LINEA: 0.10,
 
     // Doble play: prob. de DP dado un rola-out con corredor en 1ª y <2 outs
-    // = tasaGIDP_por_oportunidad / (tasa de rola-out de referencia). Tope:
+    // = DP_ESCALA × tasaGIDP_por_oportunidad / (tasa de rola-out del
+    // entorno). DP_ESCALA corrige que GIDP/(1B+BB+HBP) subestima las
+    // oportunidades reales (calibrado contra GIDP por juego de la liga). Tope:
+    DP_ESCALA: 1.3,
     DP_MAX: 0.80,
 
-    // Elevado con corredor en 3ª y <2 outs: fly de sacrificio con esta prob.
-    P_SF: 0.52,
+    // Elevado al jardín con corredor en 3ª y <2 outs: fly de sacrificio.
+    P_SF: 0.9,
     // Elevado: corredor en 2ª (sin nadie en 3ª) avanza a 3ª con esta prob.
     P_TAG_2A3: 0.18,
     // Rola out (no DP): corredor no forzado en 3ª anota / en 2ª avanza.
-    P_ANOTA_3_ROLA: 0.45,
-    P_AVANZA_2_ROLA: 0.40,
+    P_ANOTA_3_ROLA: 0.40,
+    P_AVANZA_2_ROLA: 0.30,
+    // Error (bateador llega por error): los corredores forzados avanzan una
+    // base; los no forzados, con esta probabilidad.
+    P_AVANCE_EXTRA_E: 0.35,
 
-    // Avance de corredores en hits (menos de 2 outs / con 2 outs).
+    // Avance de corredores en hits (menos de 2 outs / con 2 outs). Valores
+    // típicos: 1ª→3ª en sencillo ~27 %, anota de 2ª en sencillo ~58 %, anota
+    // de 1ª en doble ~40 %; con 2 outs se corre más. Calibrados para que
+    // «liga promedio vs liga promedio» reproduzca las carreras de cada año.
     AV_1A3_SENCILLO: 0.28,  AV_1A3_SENCILLO_2OUTS: 0.38,
     AV_2AH_SENCILLO: 0.60,  AV_2AH_SENCILLO_2OUTS: 0.78,
     AV_1AH_DOBLE: 0.42,     AV_1AH_DOBLE_2OUTS: 0.60,
+    // Outs en las bases: cuando un corredor intenta la base extra (las tres
+    // jugadas de arriba), lo ponen out con esta probabilidad. Sin esto el
+    // simulador tenía ~0.4 corredores por juego de más que la liga real.
+    P_OUT_EN_BASES: 0.08,
 
     // Robo: el intento 2ª→3ª se hace con esta fracción de la tasa del corredor.
     ROBO_2A3_FACTOR: 0.15,
@@ -98,8 +113,11 @@ var SimMotor = (function () {
 
     // Fatiga: pasado el presupuesto de BF, los eventos negativos del lanzador
     // se multiplican por 1 + FATIGA_PENDIENTE × (BF/presupuesto - 1), con tope.
-    FATIGA_PENDIENTE: 0.8,
-    FATIGA_MAX: 1.6,
+    // La pendiente es moderada a propósito: la tasa de temporada del lanzador
+    // ya promedia sus entradas frescas y cansadas, así que un castigo fuerte
+    // contaría la fatiga dos veces (se vio como +10 % de HR en neutro vs neutro).
+    FATIGA_PENDIENTE: 0.4,
+    FATIGA_MAX: 1.35,
 
     // Manager.
     PRESUPUESTO_MIN_ABRIDOR: 15,
@@ -123,7 +141,7 @@ var SimMotor = (function () {
     // Dirección del batazo (sólo narración). Rola por posición.
     DIR_ROLA: [['lanzador', 0.06], ['receptor', 0.02], ['primera', 0.13], ['segunda', 0.27], ['short', 0.32], ['tercera', 0.20]],
     DIR_POP: [['primera', 0.2], ['segunda', 0.25], ['short', 0.3], ['tercera', 0.2], ['receptor', 0.05]],
-    FRAC_ELEVADO_INFIELD: 0.15,
+    FRAC_ELEVADO_INFIELD: 0.29,
     FRAC_LINEA_INFIELD: 0.40,
     FRAC_SENCILLO_INFIELD: 0.22
   };
@@ -431,7 +449,10 @@ var SimMotor = (function () {
       liga: L,
       ref: tasasRef(liga.ref),
       usarDH: esNulo(opciones.usarDH) ? !!temporada.dh : !!opciones.usarDH,
-      tasaE: (temporada.BIPc > 0) ? temporada.E / temporada.BIPc : L.E,
+      // Errores por out en juego: E / (BIPc − hits no-HR permitidos). Se aplica
+      // a cada bola en juego que iba a ser out, así el total de errores por
+      // juego reproduce el real del equipo.
+      tasaE: tasaErrores(temporada, L),
       bateadores: {},
       lanzadores: {},
       lineup: (opciones.lineup || sug.lineup).map(function (x) { return { id: x.id, pos: x.pos }; }),
@@ -478,6 +499,15 @@ var SimMotor = (function () {
     if (!eq.rotacion.length) eq.rotacion = [temporada.lanzadores[0].id];
     if (eq.cerrador && !eq.lanzadores[eq.cerrador]) eq.cerrador = null;
     return eq;
+  }
+
+  function tasaErrores(temporada, L) {
+    // Sin BIPc: la tasa de liga E/BIP llevada a «por out en juego».
+    if (!(temporada.BIPc > 0)) return L.E * (L.OUT + L['1B'] + L['2B'] + L['3B']) / L.OUT;
+    var hitsNoHR = 0, i, l;
+    for (i = 0; i < temporada.lanzadores.length; i++) { l = temporada.lanzadores[i]; hitsNoHR += n0(l.H) - n0(l.HR); }
+    var outsEnJuego = Math.max(1, temporada.BIPc - hitsNoHR);
+    return clamp(n0(temporada.E) / outsEnJuego, 0, 0.2);
   }
 
   // Perfil de bateo de un lanzador (datos reales si existen).
@@ -804,7 +834,7 @@ var SimMotor = (function () {
 
     var outsAntes = E.outs, basesAntes = idsBases(E);
     var boxB = registrarBateador(of, slot), boxP = act.box;
-    var ctx = { E: E, of: of, df: df, bat: bat, slot: slot, boxB: boxB, boxP: boxP, anotan: [], rbi: 0, evento: ev, direccion: null, subtipo: null };
+    var ctx = { E: E, of: of, df: df, bat: bat, slot: slot, boxB: boxB, boxP: boxP, anotan: [], rbi: 0, evento: ev, direccion: null, subtipo: null, outEnBases: null };
     var corredorBat = { jugador: bat, lanzador: boxP, porError: false };
     var rng = E.rng;
     var dosOuts = E.outs === 2;
@@ -839,7 +869,7 @@ var SimMotor = (function () {
         ctx.direccion = elegirPonderado(rng, [['izquierdo', 0.38], ['central', 0.24], ['derecho', 0.38]]);
         anotarDesde(ctx, 2, true); anotarDesde(ctx, 1, true);
         if (E.bases[0]) {
-          if (rng() < (dosOuts ? MODELO.AV_1AH_DOBLE_2OUTS : MODELO.AV_1AH_DOBLE)) anotarDesde(ctx, 0, true);
+          if (rng() < (dosOuts ? MODELO.AV_1AH_DOBLE_2OUTS : MODELO.AV_1AH_DOBLE)) intentoExtra(ctx, 0, 4);
           else { E.bases[2] = E.bases[0]; E.bases[0] = null; }
         }
         E.bases[1] = corredorBat;
@@ -849,13 +879,12 @@ var SimMotor = (function () {
         ctx.direccion = rng() < MODELO.FRAC_SENCILLO_INFIELD ? elegirPonderado(rng, MODELO.DIR_ROLA) : elegirPonderado(rng, [['izquierdo', 0.36], ['central', 0.34], ['derecho', 0.30]]);
         anotarDesde(ctx, 2, true);
         if (E.bases[1]) {
-          if (rng() < (dosOuts ? MODELO.AV_2AH_SENCILLO_2OUTS : MODELO.AV_2AH_SENCILLO)) anotarDesde(ctx, 1, true);
+          if (rng() < (dosOuts ? MODELO.AV_2AH_SENCILLO_2OUTS : MODELO.AV_2AH_SENCILLO)) intentoExtra(ctx, 1, 4);
           else { E.bases[2] = E.bases[1]; E.bases[1] = null; }
         }
         if (E.bases[0]) {
-          if (!E.bases[2] && rng() < (dosOuts ? MODELO.AV_1A3_SENCILLO_2OUTS : MODELO.AV_1A3_SENCILLO)) { E.bases[2] = E.bases[0]; }
-          else { E.bases[1] = E.bases[0]; }
-          E.bases[0] = null;
+          if (!E.bases[2] && rng() < (dosOuts ? MODELO.AV_1A3_SENCILLO_2OUTS : MODELO.AV_1A3_SENCILLO)) intentoExtra(ctx, 0, 3);
+          else { E.bases[1] = E.bases[0]; E.bases[0] = null; }
         }
         E.bases[0] = corredorBat;
         break;
@@ -875,7 +904,7 @@ var SimMotor = (function () {
     jugada(E, 'PA', {
       bateador: { id: bat.id, nombre: bat.nombre, pos: slot.pos, orden: slot.orden },
       lanzador: { id: lanz.id, nombre: lanz.nombre },
-      evento: ctx.evento, direccion: ctx.direccion, subtipo: ctx.subtipo,
+      evento: ctx.evento, direccion: ctx.direccion, subtipo: ctx.subtipo, outEnBases: ctx.outEnBases,
       outsAntes: outsAntes, outsDespues: E.outs, basesAntes: basesAntes, basesDespues: idsBases(E),
       carrerasAnotadas: ctx.anotan, carreraImpulsada: ctx.rbi, marcador: marcador(E)
     });
@@ -903,13 +932,12 @@ var SimMotor = (function () {
       E.outsPerdidos++;
       corredorBat.porError = true;
       avanzarForzado(ctx, corredorBat, false);
-      // En un error todos los corredores avanzan una base, forzados o no.
       return;
     }
 
     if (sub === 'rola') {
       if (bases[0] && E.outs < 2) {
-        var pDP = Math.min(MODELO.DP_MAX, ctx.bat.tasas.gidpOpp / (E.entorno.OUT * MODELO.FRAC_ROLA));
+        var pDP = Math.min(MODELO.DP_MAX, MODELO.DP_ESCALA * ctx.bat.tasas.gidpOpp / (E.entorno.OUT * MODELO.FRAC_ROLA));
         if (rng() < pDP) {
           // Doble play: corredor de 1ª y bateador; los demás avanzan.
           ctx.evento = 'GIDP';
@@ -954,15 +982,34 @@ var SimMotor = (function () {
     ctx.boxP.IPouts += n;
   }
 
-  // Avance forzado (BB, HBP, E): cada corredor avanza una base si está forzado
-  // (en el error, todos avanzan).
+  // Avance forzado (BB, HBP, E): cada corredor avanza una base si está
+  // forzado; en el error los no forzados avanzan con P_AVANCE_EXTRA_E.
   function avanzarForzado(ctx, corredorBat, soloForzados) {
-    var b = ctx.E.bases;
+    var b = ctx.E.bases, rng = ctx.E.rng;
     var conRBI = ctx.evento !== 'E';
-    if (b[2] && (!soloForzados || (b[0] && b[1]))) anotarDesde(ctx, 2, conRBI);
-    if (b[1] && (!soloForzados || b[0])) { b[2] = b[1]; b[1] = null; }
+    var extra = soloForzados ? 0 : MODELO.P_AVANCE_EXTRA_E;
+    if (b[2] && ((b[0] && b[1]) || rng() < extra)) anotarDesde(ctx, 2, conRBI);
+    if (b[1] && (b[0] || (!b[2] && rng() < extra))) { b[2] = b[1]; b[1] = null; }
     if (b[0]) { b[1] = b[0]; b[0] = null; }
     b[0] = corredorBat;
+  }
+
+  // Intento de base extra (desde la base i, índice 0–2, hasta la base 3 o
+  // 4=home): el corredor llega o lo ponen out (P_OUT_EN_BASES).
+  function intentoExtra(ctx, i, hasta) {
+    var E = ctx.E, c = E.bases[i];
+    if (!c) return;
+    // Si ya anotó la carrera que decide el juego (walk-off) la jugada termina
+    // ahí: no hay más outs en las bases.
+    var walkoff = !E.alta && E.entrada >= 9 && E.marcador.local > E.marcador.visita;
+    if (E.rng() < MODELO.P_OUT_EN_BASES && !walkoff) {
+      E.bases[i] = null;
+      registrarOut(ctx, 1);
+      ctx.outEnBases = { corredor: { id: c.jugador.id, nombre: c.jugador.nombre }, base: hasta };
+      return;
+    }
+    if (hasta === 4) anotarDesde(ctx, i, true);
+    else { E.bases[hasta - 1] = c; E.bases[i] = null; }
   }
 
   function anotarDesde(ctx, i, conRBI) {

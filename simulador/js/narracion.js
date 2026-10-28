@@ -86,6 +86,9 @@ var SimNarracion = (function () {
   var JARDINERO = { izquierdo: 'el izquierdo', central: 'el central', derecho: 'el derecho' };
   var INFIELD = { lanzador: 'el lanzador', receptor: 'el receptor', primera: 'primera', segunda: 'segunda', short: 'el short', tercera: 'tercera' };
   function esJardin(d) { return !!JARDIN[d]; }
+  // «a» + zona con contracción: «al short», «a primera», «al jardín central».
+  function a(zona) { return /^el /.test(zona) ? 'al ' + zona.slice(3) : 'a ' + zona; }
+  function de(zona) { return /^el /.test(zona) ? 'del ' + zona.slice(3) : 'de ' + zona; }
 
   // Marcador tras una jugada, desde el punto de vista de la ofensiva.
   function marcadorTexto(ctx, j) {
@@ -158,7 +161,13 @@ var SimNarracion = (function () {
   function fraseCambio(ctx, j) {
     var sale = nombre(ctx, j.sale), entra = nombre(ctx, j.entra);
     var outs = j.sale && typeof j.sale.IPouts === 'number' ? j.sale.IPouts : null;
-    var entradas = outs === null ? '' : (outs % 3 === 0 ? (outs / 3) + (outs === 3 ? ' entrada' : ' entradas') : Math.floor(outs / 3) + ' y ' + (outs % 3) + '/3 entradas');
+    var entradas = '';
+    if (outs !== null) {
+      if (outs === 0) entradas = '';
+      else if (outs < 3) entradas = outs + '/3 de entrada';
+      else if (outs % 3 === 0) entradas = (outs / 3) + (outs === 3 ? ' entrada' : ' entradas');
+      else entradas = Math.floor(outs / 3) + ' y ' + (outs % 3) + '/3 entradas';
+    }
     if (j.motivo === 'cerrador') return elegir(ctx, [
       'Cambio de lanzador: entra el cerrador ' + entra + ' por ' + sale + ' para ' + entradaTexto(j.entrada) + '.',
       'Viene el cerrador. Sale ' + sale + ', entra ' + entra + '.'
@@ -188,7 +197,16 @@ var SimNarracion = (function () {
     var lanz = j.lanzador ? nombre(ctx, j.lanzador) : '';
     var d = j.direccion, outs = outsTexto(j.outsDespues);
     var car = carrerasTexto(ctx, j);
-    var cor = corredoresTexto(ctx, j);
+    // Tras la carrera que decide el juego (walk-off) no se mencionan corredores.
+    var walkoff = !j.alta && j.entrada >= 9 && j.marcador && j.marcador.local > j.marcador.visita;
+    var cor = walkoff ? '' : corredoresTexto(ctx, j);
+    if (j.outEnBases) {
+      var ob = j.outEnBases, nc = nombre(ctx, ob.corredor);
+      cor = unir(ob.base === 4
+        ? elegir(ctx, ['Tiro a home y ponen out a ' + nc + ' en el plato.', nc + ' trata de anotar y lo ponen out en home.'])
+        : elegir(ctx, [nc + ' intenta llegar a tercera y lo ponen out.', 'Tiro a tercera y ' + nc + ' es out tratando de avanzar.']),
+        outsTexto(j.outsDespues), j.outsDespues < 3 ? cor : '');
+    }
     var ap = apellido(j.bateador.nombre);
     switch (j.evento) {
       case 'K':
@@ -205,25 +223,25 @@ var SimNarracion = (function () {
         return unir(elegir(ctx, ['Pelotazo a ' + bat + '; se va a primera.', 'Le pegan a ' + bat + ' con el lanzamiento, toma la primera.']), car, cor);
       case '1B':
         return unir(esJardin(d) ? elegir(ctx, [
-          'Sencillo de ' + bat + ' a' + JARDIN[d].replace('el', 'l') + '.',
+          'Sencillo de ' + bat + ' ' + a(JARDIN[d]) + '.',
           bat + ' conecta de hit a' + JARDINERO[d].replace('el', 'l') + '.',
           'Línea de ' + bat + ' que cae en ' + JARDIN[d] + ': sencillo.',
           'Hit de ' + bat + ' por ' + JARDINERO[d] + '.'
         ]) : elegir(ctx, [
           'Rodado lento por ' + INFIELD[d] + ', ' + bat + ' le gana al tiro: sencillo.',
-          'Batazo de ' + bat + ' que pasa junto a ' + INFIELD[d] + ': hit al cuadro.'
+          'Batazo de ' + bat + ' que pasa junto ' + a(INFIELD[d]) + ': hit al cuadro.'
         ]), car, cor);
       case '2B':
         return unir(elegir(ctx, [
           'Doble de ' + bat + ' por ' + JARDINERO[d] + '.',
-          'Batazo de ' + bat + ' a' + JARDIN[d].replace('el', 'l') + ', llega a segunda con doble.',
+          'Batazo de ' + bat + ' ' + a(JARDIN[d]) + ', llega a segunda con doble.',
           bat + ' pega doble por la raya de' + JARDINERO[d].replace('el', 'l') + '.',
           'Línea de ' + bat + ' al hueco de' + JARDINERO[d].replace('el', 'l') + ': tubey.'
         ]), car, cor);
       case '3B':
         return unir(elegir(ctx, [
           'Triple de ' + bat + ' por ' + JARDINERO[d] + '.',
-          'Batazo largo de ' + bat + ' a' + JARDIN[d].replace('el', 'l') + '; llega hasta tercera con triple.'
+          'Batazo largo de ' + bat + ' ' + a(JARDIN[d]) + '; llega hasta tercera con triple.'
         ]), car, cor);
       case 'HR': {
         var n = j.carrerasAnotadas.length;
@@ -237,45 +255,45 @@ var SimNarracion = (function () {
       }
       case 'OUT_ROLA':
         return unir(elegir(ctx, [
-          'Rola a ' + INFIELD[d] + ', tiro a primera, out.',
-          'Rodado a ' + INFIELD[d] + ', ' + ap + ' es out en primera.',
-          bat + ' batea rola a ' + INFIELD[d] + '; out en primera.',
-          'Rola de ' + bat + ' a ' + INFIELD[d] + ', lo ponen out.'
+          'Rola ' + a(INFIELD[d]) + ', tiro a primera, out.',
+          'Rodado ' + a(INFIELD[d]) + ', ' + ap + ' es out en primera.',
+          bat + ' batea rola ' + a(INFIELD[d]) + '; out en primera.',
+          'Rola de ' + bat + ' ' + a(INFIELD[d]) + ', lo ponen out.'
         ]), car, outs, j.outsDespues < 3 ? cor : '');
       case 'GIDP':
         return unir(elegir(ctx, [
-          'Rola a ' + INFIELD[d] + ', doble play: ' + ap + ' batea para dos outs.',
-          'Rodado a ' + INFIELD[d] + ', se la pasan a segunda y a primera: doble matanza para ' + bat + '.',
+          'Rola ' + a(INFIELD[d]) + ', doble play: ' + ap + ' batea para dos outs.',
+          'Rodado ' + a(INFIELD[d]) + ', se la pasan a segunda y a primera: doble matanza para ' + bat + '.',
           bat + ' batea para doble play por ' + INFIELD[d] + '.'
         ]), car, outs, j.outsDespues < 3 ? cor : '');
       case 'OUT_ELEVADO':
         return unir(esJardin(d) ? elegir(ctx, [
-          'Elevado a' + JARDIN[d].replace('el', 'l') + ', out.',
-          'Fly de ' + bat + ' a' + JARDINERO[d].replace('el', 'l') + ', lo atrapan sin problemas.',
+          'Elevado ' + a(JARDIN[d]) + ', out.',
+          'Fly de ' + bat + ' ' + a(JARDINERO[d]) + ', lo atrapan sin problemas.',
           bat + ' eleva a' + JARDIN[d].replace('el', 'l') + '; out.'
         ]) : elegir(ctx, [
-          'Elevado corto a ' + INFIELD[d] + ', out.',
+          'Elevado corto ' + a(INFIELD[d]) + ', out.',
           bat + ' eleva al cuadro, lo atrapa ' + INFIELD[d] + '.'
         ]), car, outs, j.outsDespues < 3 ? cor : '');
       case 'OUT_LINEA':
         return unir(esJardin(d) ? elegir(ctx, [
-          'Línea a' + JARDINERO[d].replace('el', 'l') + ', out.',
+          'Línea ' + a(JARDINERO[d]) + ', out.',
           bat + ' pega línea a' + JARDIN[d].replace('el', 'l') + ', pero la atrapan.'
         ]) : elegir(ctx, [
-          'Línea a ' + INFIELD[d] + ', la atrapa de aire. Out.',
-          bat + ' conecta línea dura a ' + INFIELD[d] + '; out.'
+          'Línea ' + a(INFIELD[d]) + ', la atrapa de aire. Out.',
+          bat + ' conecta línea dura ' + a(INFIELD[d]) + '; out.'
         ]), outs, j.outsDespues < 3 ? cor : '');
       case 'SF':
         return unir(elegir(ctx, [
-          'Elevado a' + JARDIN[d].replace('el', 'l') + ', lo atrapan y anota el corredor desde tercera: fly de sacrificio de ' + bat + '.',
-          'Fly de sacrificio de ' + bat + ' a' + JARDINERO[d].replace('el', 'l') + '.'
+          'Elevado ' + a(JARDIN[d]) + ', lo atrapan y anota el corredor desde tercera: fly de sacrificio de ' + bat + '.',
+          'Fly de sacrificio de ' + bat + ' ' + a(JARDINERO[d]) + '.'
         ]), car, outs, cor);
       case 'E': {
         var zona = esJardin(d) ? JARDIN[d] : INFIELD[d];
-        var intro = j.subtipo === 'elevado' ? 'Elevado a ' + zona + ', se le cae' : (j.subtipo === 'linea' ? 'Línea a ' + zona + ', no la puede retener' : 'Rola a ' + zona + ', se le escapa');
+        var intro = j.subtipo === 'elevado' ? 'Elevado ' + a(zona) + ', se le cae' : (j.subtipo === 'linea' ? 'Línea ' + a(zona) + ', no la puede retener' : 'Rola ' + a(zona) + ', se le escapa');
         return unir(elegir(ctx, [
           intro + ': error, ' + bat + ' llega a primera.',
-          'Error de la defensa en ' + (esJardin(d) ? zona : 'la jugada de ' + zona) + '; ' + bat + ' queda en primera.'
+          'Error de la defensa en ' + (esJardin(d) ? zona : 'la jugada ' + de(zona)) + '; ' + bat + ' queda en primera.'
         ]), car, cor);
       }
       default:
