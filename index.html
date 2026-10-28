@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Monumento — Museo digital de los New York Yankees</title>
+<meta name="description" content="Museo digital de los New York Yankees: 124 temporadas, 27 Series Mundiales, Monument Park, efemérides y duelos de leyendas, con datos de Lahman, Retrosheet y la MLB Stats API.">
+<link rel="stylesheet" href="assets/css/museo.css">
+<link rel="stylesheet" href="assets/css/portada.css">
+<script src="data/meta.js"></script>
+<script src="data/temporadas.js"></script>
+<script src="data/series.js"></script>
+<script src="data/efemerides.js"></script>
+<script src="data/retirados.js"></script>
+<script src="assets/js/comun.js"></script>
+</head>
+<body>
+<main>
+  <section class="portada">
+    <div class="contenedor">
+      <p class="sobre">Museo digital · New York Yankees · 1903–<span id="ano-final"></span></p>
+      <h1 class="titulo-portada">El Monumento</h1>
+      <p class="lema">Ciento veinticuatro temporadas, veintisiete títulos y mil ochocientos jugadores, contados sólo con los registros.</p>
+      <svg class="friso" viewBox="0 0 1120 40" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="20" x2="1120" y2="20" />
+        <g id="friso-marcas"></g>
+      </svg>
+      <p class="friso-nota">Cada marca es una Serie Mundial ganada, en su lugar en el tiempo, de 1903 a <span id="ano-final-2"></span>.</p>
+    </div>
+  </section>
+
+  <section class="seccion hoy">
+    <div class="contenedor">
+      <div class="hoy-cabeza">
+        <p class="sobre">Este día en la historia</p>
+        <h2 id="hoy-fecha"></h2>
+      </div>
+      <div class="hoy-cuerpo">
+        <p class="hoy-principal" id="hoy-principal"></p>
+        <ul class="lista-limpia hoy-lista" id="hoy-lista"></ul>
+        <p class="hoy-rec" id="hoy-rec"></p>
+        <p><a class="boton" href="este-dia.html">Ver todas las fechas</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion cifras">
+    <div class="contenedor">
+      <div class="datos cifras-rejilla" id="cifras"></div>
+    </div>
+  </section>
+
+  <section class="seccion salas">
+    <div class="contenedor">
+      <p class="sobre">Las salas</p>
+      <ol class="salas-lista">
+        <li><a href="temporadas.html"><span class="salas-num">I</span><span class="salas-nombre">Las temporadas</span><span class="salas-desc">Una página por temporada desde 1903, con récord, mánager, líderes y postemporada. Una línea de tiempo para ver 124 años de un vistazo.</span></a></li>
+        <li><a href="anillos.html"><span class="salas-num">II</span><span class="salas-nombre">Los 27 anillos</span><span class="salas-desc">Cada Serie Mundial ganada —y las perdidas— juego por juego, con sus figuras y una crónica construida sólo con los datos.</span></a></li>
+        <li><a href="monument-park.html"><span class="salas-num">III</span><span class="salas-nombre">Monument Park</span><span class="salas-desc">Los números retirados y las fichas de cada leyenda, con sus números de carrera en pinstripes.</span></a></li>
+        <li><a href="este-dia.html"><span class="salas-num">IV</span><span class="salas-nombre">Este día en la historia</span><span class="salas-desc">Lo que pasó en la historia del equipo en cualquier fecha del año: títulos, juegos perfectos, debuts, estadios.</span></a></li>
+        <li><a href="duelo.html"><span class="salas-num">V</span><span class="salas-nombre">Duelo de leyendas</span><span class="salas-desc">Elige dos jugadores de cualquier época y compáralos lado a lado, temporada por temporada.</span></a></li>
+        <li><a href="vestidor.html"><span class="salas-num">VI</span><span class="salas-nombre">El vestidor</span><span class="salas-desc">Trivia generada desde los registros, con tres niveles y récord personal.</span></a></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion ultima">
+    <div class="contenedor rejilla-2">
+      <div>
+        <p class="sobre">La temporada más reciente</p>
+        <h3 id="ult-titulo"></h3>
+        <p id="ult-texto" class="texto-serif"></p>
+        <p><a id="ult-enlace" href="temporadas.html">Ver la temporada</a></p>
+      </div>
+      <div>
+        <p class="sobre">El último título</p>
+        <h3 id="tit-titulo"></h3>
+        <p id="tit-texto" class="texto-serif"></p>
+        <p><a id="tit-enlace" href="anillos.html">Ver la serie</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="assets/js/portada.js"></script>
+</body>
+</html>

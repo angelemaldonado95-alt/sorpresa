@@ -1,0 +1,40 @@
+/* Portada */
+.portada {
+  padding: 5rem 0 3.5rem;
+  background: var(--marino);
+  color: #f3f1ea;
+  background-image: repeating-linear-gradient(90deg, transparent 0 11px, rgba(255, 255, 255, 0.04) 11px 12px);
+}
+.portada .sobre, .sobre { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tinta-leve); margin: 0 0 0.9rem; }
+.portada .sobre { color: rgba(243, 241, 234, 0.6); }
+.titulo-portada { font-size: clamp(3rem, 8vw, 6.4rem); font-weight: 400; letter-spacing: -0.01em; line-height: 1; margin: 0 0 1rem; }
+.lema { font-family: var(--serif); font-size: clamp(1.05rem, 1.8vw, 1.35rem); font-style: italic; color: rgba(243, 241, 234, 0.8); max-width: 42ch; margin: 0 0 2.5rem; line-height: 1.4; }
+.friso { width: 100%; height: 40px; display: block; color: rgba(243, 241, 234, 0.55); }
+.friso line { stroke: currentColor; stroke-width: 1; }
+.friso .marca-ws { stroke: var(--oro); stroke-width: 2; }
+.friso .marca-ano { stroke: currentColor; stroke-width: 1; opacity: 0.35; }
+.friso-nota { font-size: 0.75rem; color: rgba(243, 241, 234, 0.5); margin: 0.6rem 0 0; }
+
+.hoy .contenedor { display: grid; grid-template-columns: 260px 1fr; gap: 2.5rem; align-items: start; }
+.hoy-cabeza h2 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); font-weight: 400; }
+.hoy-principal { font-family: var(--serif); font-size: clamp(1.25rem, 2.2vw, 1.65rem); line-height: 1.35; margin-bottom: 1.4rem; }
+.hoy-principal .ano { color: var(--tinta-leve); font-family: var(--mono); font-size: 0.8em; margin-right: 0.6rem; }
+.hoy-lista li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1rem; padding: 0.55rem 0; border-top: 1px solid var(--linea); }
+.hoy-lista .ano { font-family: var(--mono); color: var(--tinta-leve); font-size: 0.85rem; padding-top: 0.15rem; }
+.hoy-rec { font-size: 0.85rem; color: var(--tinta-suave); margin-top: 1.2rem; }
+@media (max-width: 760px) { .hoy .contenedor { grid-template-columns: 1fr; gap: 1rem; } }
+
+.cifras-rejilla { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.cifras .valor { font-size: 2.2rem; }
+
+.salas-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
+.salas-lista li { border-bottom: 1px solid var(--linea); }
+.salas-lista a { display: grid; grid-template-columns: 3rem 16rem 1fr; gap: 1.5rem; padding: 1.3rem 0; align-items: baseline; }
+.salas-lista a:hover { text-decoration: none; background: var(--raya); }
+.salas-num { font-family: var(--serif); color: var(--tinta-leve); font-size: 1.1rem; }
+.salas-nombre { font-family: var(--serif); font-size: 1.45rem; }
+.salas-desc { color: var(--tinta-suave); font-size: 0.92rem; max-width: 60ch; }
+@media (max-width: 760px) { .salas-lista a { grid-template-columns: 2.5rem 1fr; } .salas-desc { grid-column: 2; } }
+
+.texto-serif { font-family: var(--serif); font-size: 1.1rem; line-height: 1.45; }
+.ultima h3 { font-weight: 400; font-size: 1.7rem; }
