@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duelo de leyendas — El Monumento</title>
+<link rel="stylesheet" href="assets/css/museo.css">
+<link rel="stylesheet" href="assets/css/duelo.css">
+<script src="data/meta.js"></script>
+<script src="data/temporadas.js"></script>
+<script src="data/jugadores.js"></script>
+<script src="assets/js/comun.js"></script>
+</head>
+<body>
+<!-- comun.js inserta la cabecera con navegación y botón de tema al cargar -->
+<main>
+  <section class="sala-cabeza"><div class="contenedor">
+    <p class="sobre">Sala 5</p>
+    <h1>Duelo de leyendas</h1>
+    <p class="intro" id="intro">Elige a dos jugadores de cualquier época y compara sus números con los Yankees, temporada por temporada. Un solo nombre abre su ficha.</p>
+  </div></section>
+
+  <!-- Buscadores: siempre visibles -->
+  <section class="seccion buscadores" id="buscadores" aria-labelledby="buscadores-titulo"><div class="contenedor">
+    <h2 id="buscadores-titulo" class="sr-solo">Elegir jugadores</h2>
+    <div class="buscadores-rejilla">
+      <div class="buscador" data-indice="0">
+        <label class="etiqueta-sobre" for="buscar-0">Jugador 1</label>
+        <input class="campo" id="buscar-0" type="text" autocomplete="off" spellcheck="false" placeholder="Escribe un nombre…"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lista-0" aria-haspopup="listbox">
+        <ul class="autocompletar" id="lista-0" role="listbox" aria-label="Resultados para jugador 1" hidden></ul>
+      </div>
+      <p class="buscadores-vs" aria-hidden="true">contra</p>
+      <div class="buscador" data-indice="1">
+        <label class="etiqueta-sobre" for="buscar-1">Jugador 2</label>
+        <input class="campo" id="buscar-1" type="text" autocomplete="off" spellcheck="false" placeholder="Escribe un nombre…"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lista-1" aria-haspopup="listbox">
+        <ul class="autocompletar" id="lista-1" role="listbox" aria-label="Resultados para jugador 2" hidden></ul>
+      </div>
+    </div>
+    <p class="peq buscadores-nota" id="buscadores-nota"></p>
+  </section>
+
+  <!-- Mensaje cuando el hash no corresponde a ningún jugador -->
+  <section class="seccion oculto" id="aviso"><div class="contenedor"><p id="aviso-texto"></p></div></section>
+
+  <!-- Ficha de un solo jugador (duelo.html#id) -->
+  <section class="seccion oculto" id="ficha" aria-live="polite"><div class="contenedor" id="ficha-contenido"></div></section>
+
+  <!-- Duelo (duelo.html#id1,id2) -->
+  <section class="seccion oculto" id="duelo" aria-live="polite"><div class="contenedor">
+    <div id="duelo-fichas" class="duelo-fichas"></div>
+  </div></section>
+
+  <section class="seccion oculto" id="comparacion"><div class="contenedor">
+    <p class="etiqueta-sobre">Totales con los Yankees</p>
+    <h2>Frente a frente</h2>
+    <p class="peq" id="comparacion-nota"></p>
+    <div id="comparacion-tablas"></div>
+  </div></section>
+
+  <section class="seccion oculto" id="trayectoria"><div class="contenedor">
+    <p class="etiqueta-sobre">Trayectoria</p>
+    <h2>Temporada por temporada</h2>
+    <p class="peq" id="trayectoria-nota"></p>
+    <div class="grafica-controles" id="grafica-controles">
+      <label>Métrica
+        <select class="campo" id="grafica-metrica"></select>
+      </label>
+      <fieldset class="grafica-modo">
+        <legend class="sr-solo">Eje horizontal</legend>
+        <label><input type="radio" name="grafica-eje" value="calendario" checked> Temporada del equipo</label>
+        <label><input type="radio" name="grafica-eje" value="carrera"> Año de carrera con NY</label>
+      </fieldset>
+      <label class="grafica-acum"><input type="checkbox" id="grafica-acumulado"> Acumulado</label>
+    </div>
+    <div class="grafica" id="grafica"></div>
+  </div></section>
+
+  <section class="seccion oculto" id="por-temporada"><div class="contenedor">
+    <p class="etiqueta-sobre">Las cifras</p>
+    <h2>Cada temporada</h2>
+    <div id="por-temporada-contenido"></div>
+  </div></section>
+
+  <!-- Duelos sugeridos, calculados desde los datos -->
+  <section class="seccion" id="sugerencias"><div class="contenedor">
+    <p class="etiqueta-sobre">Para empezar</p>
+    <h2>Duelos sugeridos</h2>
+    <p class="peq">Parejas calculadas a partir de los totales con los Yankees.</p>
+    <ul class="lista-limpia sugerencias" id="sugerencias-lista"></ul>
+  </div></section>
+</main>
+<script src="assets/js/duelo.js"></script>
+</body>
+</html>

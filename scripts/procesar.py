@@ -583,6 +583,8 @@ def main():
                 "e": s["e"], "juegos": juegos_s, "bateo": bateo, "pitcheo": pitcheo, "mvp": mvp,
                 "mgr": t["mgr"][-1]["n"] if t["mgr"] else None, "record": [t["w"], t["l"]],
             }
+            # Lahman no registra el empate de 1922 en SeriesPost; se toma de Retrosheet.
+            serie["e"] = max(serie["e"], sum(1 for j in juegos_s if j["res"] == "E"))
             serie["cronica"] = cronica(serie)
             series_out.append(serie)
 
@@ -866,7 +868,8 @@ def main():
         "api": {"temporada": S_API},
         "retrosheet_ultimo": ULTIMO_LAHMAN,
         "sin_hit": [{**s, "fecha": f"{s['fecha'][:4]}-{s['fecha'][4:6]}-{s['fecha'][6:]}",
-                     "rivalN": nombre_equipo.get((int(s["fecha"][:4]), "R:" + s["rival"]), s["rival"])} for s in sin_hit],
+                     "rivalN": nombre_equipo.get((int(s["fecha"][:4]), "R:" + s["rival"]), s["rival"]),
+                     "rivalEs": equipo_es(nombre_equipo.get((int(s["fecha"][:4]), "R:" + s["rival"]), s["rival"]))} for s in sin_hit],
     }
 
     print("Escribiendo data/…")

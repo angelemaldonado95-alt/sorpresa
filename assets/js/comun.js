@@ -144,7 +144,7 @@
   function esPitcher(j) {
     if (j.pos === 'P') return true;
     var tp = totalesPitcheo(j), tb = totalesBateo(j);
-    return tp && (!tb || tp.IPO / 3 > tb.AB / 2);
+    return !!(tp && (!tb || tp.IPO / 3 > tb.AB / 2));
   }
   function anosConNY(j) {
     var a = {};
