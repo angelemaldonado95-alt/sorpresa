@@ -90,12 +90,32 @@ def fecha_larga(f):
     return f"{f.day} de {MESES[f.month - 1]} de {f.year}"
 
 
+PAISES = {
+    "USA": "Estados Unidos", "D.R.": "República Dominicana", "P.R.": "Puerto Rico", "CAN": "Canadá",
+    "Panama": "Panamá", "Japan": "Japón", "Netherlands": "Países Bajos", "Mexico": "México", "Cuba": "Cuba",
+    "Venezuela": "Venezuela", "Colombia": "Colombia", "Germany": "Alemania", "Italy": "Italia", "Ireland": "Irlanda",
+    "United Kingdom": "Reino Unido", "Brazil": "Brasil", "South Korea": "Corea del Sur", "Spain": "España",
+    "Curacao": "Curazao", "Switzerland": "Suiza", "Sweden": "Suecia", "Norway": "Noruega", "Denmark": "Dinamarca",
+    "France": "Francia", "Poland": "Polonia", "Russia": "Rusia", "Belgium": "Bélgica", "Nicaragua": "Nicaragua",
+    "Philippines": "Filipinas", "Taiwan": "Taiwán", "Honduras": "Honduras", "Aruba": "Aruba", "Jamaica": "Jamaica",
+    "Bahamas": "Bahamas", "Australia": "Australia", "Scotland": "Escocia", "Wales": "Gales", "England": "Inglaterra",
+    "Czech Republic": "República Checa", "Austria": "Austria", "Lithuania": "Lituania", "Greece": "Grecia",
+    "Finland": "Finlandia", "Hungary": "Hungría", "Czechoslovakia": "Checoslovaquia", "Virgin Islands": "Islas Vírgenes",
+    "Saudi Arabia": "Arabia Saudita", "American Samoa": "Samoa Estadounidense", "South Africa": "Sudáfrica",
+}
+CIUDADES_NAC = {"New York": "Nueva York", "Los Angeles": "Los Ángeles", "St. Louis": "San Luis",
+                "Philadelphia": "Filadelfia", "Havana": "La Habana", "Panama City": "Ciudad de Panamá"}
+
+
 def lugar_texto(p):
-    """Ciudad, estado, país; omite el estado si repite el país (Lahman: 'Panamá, Panama')."""
-    partes = [p.get("birthCity"), p.get("birthState"), p.get("birthCountry")]
-    if partes[1] and partes[2] and normaliza(partes[1]) == normaliza(partes[2]):
-        partes[1] = None
-    return ", ".join(x for x in partes if x)
+    """Ciudad, estado, país en español; omite repeticiones (Lahman: 'Panamá, Panama')."""
+    ciudad, estado, pais = p.get("birthCity"), p.get("birthState"), p.get("birthCountry")
+    partes = []
+    for x in (ciudad, estado, pais):
+        if x and all(normaliza(x) != normaliza(y) for y in partes):
+            partes.append(x)
+    partes = [CIUDADES_NAC.get(x, PAISES.get(x, x)) for x in partes]
+    return ", ".join(partes)
 
 
 def miles(x):
@@ -456,7 +476,7 @@ def main():
                 if tr["team"]["id"] == NYY_API:
                     rec = tr
         juegos_api = [g for d in schedule["dates"] for g in d["games"]]
-        reg = [g for g in juegos_api if g["gameType"] == "R" and g["status"]["abstractGameState"] == "Final"]
+        reg = [g for g in juegos_api if g["gameType"] == "R" and g["status"].get("codedGameState") == "F"]
         def lado(g):
             return ("home", "away") if g["teams"]["home"]["team"]["id"] == NYY_API else ("away", "home")
         r_a = sum(g["teams"][lado(g)[0]].get("score", 0) for g in reg)
@@ -471,7 +491,7 @@ def main():
         # postemporada desde el calendario
         series = defaultdict(lambda: {"g": 0, "p": 0})
         for g in juegos_api:
-            if g["gameType"] in ("F", "D", "L", "W") and g["status"]["abstractGameState"] == "Final":
+            if g["gameType"] in ("F", "D", "L", "W") and g["status"].get("codedGameState") == "F":
                 yo, el = lado(g)
                 riv = g["teams"][el]["team"]["name"]
                 k = (g["gameType"], riv)
@@ -628,11 +648,12 @@ def main():
                 if s["gano"]:
                     texto = (f"Los Yankees ganan la Serie Mundial de {s['a']} al vencer {j['ny']}-{j['op']} a "
                              f"{equipo_es(s['rivalN'])} en el juego {j['n']}. La serie terminó {s['g']}-{s['p']}"
-                             + (f" con {s['e']} empate" + ("s" if s['e'] > 1 else "") if s["e"] else "") + ".")
+                             + ((" con un empate" if s["e"] == 1 else f" con {s['e']} empates") if s["e"] else "") + ".")
                     agregar(md(f), s["a"], "titulo", texto, 100)
                 else:
                     texto = (f"{equipo_es(s['rivalN'], True)} se llevan la Serie Mundial de {s['a']} al derrotar "
-                             f"{j['op']}-{j['ny']} a los Yankees en el juego {j['n']}. La serie terminó {s['p']}-{s['g']}.")
+                             f"{j['op']}-{j['ny']} a los Yankees en el juego {j['n']}. La serie terminó {s['p']}-{s['g']}"
+                             + ((" con un empate" if s["e"] == 1 else f" con {s['e']} empates") if s["e"] else "") + ".")
                     agregar(md(f), s["a"], "serie", texto, 40)
             else:
                 v = {"G": "ganan", "P": "pierden", "E": "empatan"}[j["res"]]
@@ -758,7 +779,7 @@ def main():
 
     # Juegos de la temporada de la API (postemporada)
     if S_API > ULTIMO_LAHMAN:
-        js = [g for d in schedule["dates"] for g in d["games"] if g["status"]["abstractGameState"] == "Final"]
+        js = [g for d in schedule["dates"] for g in d["games"] if g["status"].get("codedGameState") == "F"]
         js.sort(key=lambda g: g["gameDate"])
         for g in js:
             if g["gameType"] == "R":
@@ -803,7 +824,7 @@ def main():
     if S_API > ULTIMO_LAHMAN:
         for d in schedule["dates"]:
             for g in d["games"]:
-                if g["gameType"] == "R" and g["status"]["abstractGameState"] == "Final":
+                if g["gameType"] == "R" and g["status"].get("codedGameState") == "F":
                     yo = "home" if g["teams"]["home"]["team"]["id"] == NYY_API else "away"
                     rec_fecha[g["officialDate"][5:]][0 if g["teams"][yo].get("isWinner") else 1] += 1
 
@@ -894,7 +915,7 @@ def cronica(s):
     """Crónica breve, sobria, construida solo con los datos de la serie."""
     js = s["juegos"]
     partes = []
-    total = f"{s['g']}-{s['p']}" + (f" (con {s['e']} empate{'s' if s['e'] > 1 else ''})" if s["e"] else "")
+    total = f"{s['g']}-{s['p']}" + ((" (con un empate)" if s["e"] == 1 else f" (con {s['e']} empates)") if s["e"] else "")
     if s["gano"]:
         if s["p"] == 0:
             partes.append(f"Barrida. Los Yankees de {s['mgr']} despacharon a {equipo_es(s['rivalN'])} en {len(js)} juegos, sin conocer la derrota.")
@@ -931,7 +952,7 @@ def cronica(s):
         prom = f"{b['h'] / b['ab']:.3f}".lstrip("0") if b["ab"] else "-"
         txt = f"{b['n']} bateó {b['h']} de {b['ab']} ({prom})"
         extras = []
-        if b["hr"]: extras.append(f"{b['hr']} jonrón" + ("es" if b["hr"] > 1 else ""))
+        if b["hr"]: extras.append((f"{b['hr']} jonrones" if b["hr"] > 1 else "1 jonrón"))
         if b["rbi"]: extras.append(f"{b['rbi']} carrera" + ("s" if b["rbi"] > 1 else "") + " impulsada" + ("s" if b["rbi"] > 1 else ""))
         if extras: txt += " con " + " y ".join(extras)
         partes.append(txt + ".")
