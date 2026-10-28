@@ -504,7 +504,7 @@
       document.title = e.n + ' — Duelo de leyendas — El Monumento';
       nota.textContent = 'Escribe un segundo nombre para enfrentar a ' + e.n + ' con otro jugador.';
       document.getElementById('ficha-contenido').innerHTML =
-        fichaBio(e, { acciones: '<button class="boton primario" type="button" id="btn-rival">Elegir rival para el duelo</button>' }) +
+        fichaBio(e, { acciones: '<button class="boton primario" type="button" id="btn-rival">Elegir rival para el duelo</button> <a class="boton" href="' + U.enlaceFranela(validos[0]) + '">Ver su ficha en La Franela</a>' }) +
         '<div class="mt-2">' + tablasJugador(e) + '</div>';
       document.getElementById('btn-rival').addEventListener('click', function () {
         inputs[1].focus();

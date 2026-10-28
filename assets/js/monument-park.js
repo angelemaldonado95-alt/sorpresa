@@ -185,7 +185,7 @@
     html += bloqueManager(r.mgr);
 
     html += '<div class="acciones-ficha">';
-    if (j) html += '<a class="boton" href="' + U.enlaceJugador(r.id) + '">Comparar en el Duelo</a>';
+    if (j) html += '<a class="boton" href="' + U.enlaceJugador(r.id) + '">Comparar en el Duelo</a> <a class="boton" href="' + U.enlaceFranela(r.id) + '">Ver su ficha en La Franela</a>';
     html += '</div></article>';
     return html;
   }

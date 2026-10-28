@@ -38,3 +38,4 @@
 
 .texto-serif { font-family: var(--serif); font-size: 1.1rem; line-height: 1.45; }
 .ultima h3 { font-weight: 400; font-size: 1.7rem; }
+.alas-titulo { margin-top: 3rem; }

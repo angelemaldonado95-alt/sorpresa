@@ -300,6 +300,7 @@
         return '<li class="' + (p.gano ? 'gano' : 'perdio') + '"><span><span class="ronda">' + U.esc(p.nombre) + '</span>' + frase + '</span><span class="marcador">' + marcador(p) + '</span></li>';
       }).join('') + '</ul>';
       if (t.ws) html += '<p class="enlace-anillo"><a class="boton" href="anillos.html#' + t.a + '">Ver la Serie Mundial de ' + t.a + ' en «Los 27 anillos»</a></p>';
+      if (t.post.some(function (p) { return p.rival === 'BOS'; })) html += '<p class="enlace-anillo"><a class="boton" href="' + U.enlaceRivalidad(t.a) + '">Ver el duelo con Boston de ' + t.a + ' en «La Rivalidad»</a></p>';
     } else if (t.a === 1904 || t.a === 1994) {
       html += '<p class="nota-vacia">No se disputó la Serie Mundial ese año.</p>';
     } else {

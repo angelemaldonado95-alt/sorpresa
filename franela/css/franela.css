@@ -142,7 +142,7 @@ main { max-width: var(--ancho); margin: 0 auto; padding: 32px 16px 64px; }
   border: 1px solid var(--linea);
   border-radius: var(--radio);
 }
-@media (max-width: 760px) { .buscador { grid-template-columns: 1fr 1fr; } .buscador__campo--texto { grid-column: 1 / -1; } }
+@media (max-width: 760px) { .buscador { grid-template-columns: 1fr 1fr; } .buscador__campo--texto { grid-column: 1 / -1; } .buscador__campo { min-width: 0; } .buscador__campo input, .buscador__campo select { width: 100%; min-width: 0; } }
 .buscador__campo { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: var(--tinta-2); text-transform: uppercase; letter-spacing: 0.06em; }
 .buscador__campo input, .buscador__campo select, .control select, .control input {
   font-size: 1rem;

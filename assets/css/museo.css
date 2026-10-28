@@ -110,7 +110,8 @@ main { flex: 1; }
 .cabecera .contenedor { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 64px; }
 .marca { font-family: var(--serif); font-size: 1.25rem; letter-spacing: 0.02em; display: flex; align-items: baseline; gap: 0.6rem; white-space: nowrap; }
 .marca small { color: rgba(243, 241, 234, 0.6); font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; }
-.nav { display: flex; gap: 1.25rem; align-items: center; font-size: 0.84rem; letter-spacing: 0.01em; }
+.nav { display: flex; gap: 1.05rem; align-items: center; font-size: 0.82rem; letter-spacing: 0.01em; }
+.nav-sep { width: 1px; height: 18px; background: rgba(255, 255, 255, 0.25); }
 .nav a { white-space: nowrap; }
 .nav a { color: rgba(243, 241, 234, 0.78); padding: 1.3rem 0; border-bottom: 2px solid transparent; }
 .nav a:hover { color: #fff; text-decoration: none; }
@@ -119,10 +120,11 @@ main { flex: 1; }
 .tema-btn { background: none; border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
 .tema-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 .tema-btn:hover { background: rgba(255, 255, 255, 0.1); }
-@media (max-width: 1060px) {
+@media (max-width: 1240px) {
   .nav { display: none; position: absolute; left: 0; right: 0; top: 64px; background: var(--marino); flex-direction: column; align-items: stretch; gap: 0; padding: 0.5rem 0 1rem; border-bottom: 1px solid rgba(255,255,255,0.12); z-index: 20; }
   .nav.abierta { display: flex; }
   .nav a { padding: 0.75rem var(--gutter); border-bottom: 0; border-left: 2px solid transparent; }
+  .nav-sep { width: auto; height: 1px; margin: 0.5rem var(--gutter); }
   .nav a[aria-current="page"] { border-left-color: #fff; }
   .nav-btn { display: inline-block; }
   .cabecera { position: relative; }
@@ -188,5 +190,6 @@ input.campo { width: 100%; }
 .centrado { text-align: center; }
 .mt-1 { margin-top: 1rem; } .mt-2 { margin-top: 2rem; } .mt-3 { margin-top: 3rem; }
 .mb-1 { margin-bottom: 1rem; } .mb-2 { margin-bottom: 2rem; }
-@media (max-width: 640px) { .cabecera .marca small { display: none; } .cabecera .contenedor { gap: 0.8rem; } .marca { font-size: 1.15rem; }
+@media (max-width: 1400px) { .cabecera .marca small { display: none; } }
+@media (max-width: 640px) { .cabecera .contenedor { gap: 0.8rem; } .marca { font-size: 1.15rem; }
   :root { --gutter: 16px; } body { font-size: 15px; } .seccion { padding: 2rem 0; } .sala-cabeza { padding: 2rem 0 1.5rem; } }

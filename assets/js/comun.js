@@ -24,12 +24,18 @@
   // ---------- cabecera y pie ----------
   var SALAS = [
     ['index.html', 'Portada'],
-    ['temporadas.html', 'Las temporadas'],
+    ['temporadas.html', 'Temporadas'],
     ['anillos.html', 'Los 27 anillos'],
     ['monument-park.html', 'Monument Park'],
     ['este-dia.html', 'Este día'],
-    ['duelo.html', 'Duelo de leyendas'],
-    ['vestidor.html', 'El vestidor']
+    ['duelo.html', 'Duelo'],
+    ['vestidor.html', 'Vestidor']
+  ];
+  // Alas del museo construidas aparte, cada una en su carpeta.
+  var ALAS = [
+    ['simulador/index.html', 'Simulador'],
+    ['franela/index.html', 'Franela'],
+    ['rivalidad/index.html', 'Rivalidad']
   ];
   function paginaActual() {
     var p = location.pathname.split('/').pop();
@@ -41,6 +47,9 @@
     h.className = 'cabecera';
     var links = SALAS.map(function (s) {
       return '<a href="' + s[0] + '"' + (s[0] === actual ? ' aria-current="page"' : '') + '>' + s[1] + '</a>';
+    }).join('');
+    links += '<span class="nav-sep" aria-hidden="true"></span>' + ALAS.map(function (s) {
+      return '<a href="' + s[0] + '">' + s[1] + '</a>';
     }).join('');
     h.innerHTML =
       '<div class="contenedor">' +
@@ -166,6 +175,8 @@
   function nombreJugador(id) { var j = M.jugadores && M.jugadores[id]; return j ? j.n : id; }
   function enlaceJugador(id) { return 'duelo.html#' + encodeURIComponent(id); }
   function enlaceTemporada(a) { return 'temporadas.html#' + a; }
+  function enlaceFranela(id) { return 'franela/index.html#archivo/jugador=' + encodeURIComponent(id); }
+  function enlaceRivalidad(ano) { return 'rivalidad/index.html#temporadas' + (ano ? '/' + ano : ''); }
 
   // ---------- varios ----------
   function hoyMD() {
@@ -178,7 +189,7 @@
   M.util = {
     fechaLarga: fechaLarga, fechaCorta: fechaCorta, miles: miles, prom: prom, pct: pct, era: era, ip: ip, esc: esc, plural: plural,
     B: B, P: P, totalesBateo: totalesBateo, totalesPitcheo: totalesPitcheo, esPitcher: esPitcher, anosConNY: anosConNY, rangoAnos: rangoAnos,
-    posicion: posicion, lado: lado, nombreJugador: nombreJugador, enlaceJugador: enlaceJugador, enlaceTemporada: enlaceTemporada,
+    posicion: posicion, lado: lado, nombreJugador: nombreJugador, enlaceJugador: enlaceJugador, enlaceTemporada: enlaceTemporada, enlaceFranela: enlaceFranela, enlaceRivalidad: enlaceRivalidad,
     hoyMD: hoyMD, cssVar: cssVar, colorTexto: colorTexto, MESES: MESES, temaActual: temaActual
   };
   M.montarCabecera = montarCabecera;

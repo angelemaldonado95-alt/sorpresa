@@ -909,4 +909,18 @@
   // Permite llegar con #juego=ID y abrir la pizarra directamente.
   var hashJuego = /juego=([0-9]{8}-[0-9])/.exec(location.hash);
   if (hashJuego && porId[hashJuego[1]]) abrirPizarra(hashJuego[1]);
+  // Permite llegar desde El Monumento con #temporadas/AAAA: elige la década y abre el año.
+  var hashTemp = /^#temporadas\/(\d{4})$/.exec(location.hash);
+  if (hashTemp) {
+    var anio = +hashTemp[1], dec = Math.floor(anio / 10) * 10;
+    var botonDec = document.querySelector('#decadas [data-decada="' + dec + '"]');
+    if (botonDec) botonDec.click();
+    var botonAnio = Array.prototype.filter.call(document.querySelectorAll('#temporadas-contenido .temporadas__anio button'), function (b) { return b.textContent === String(anio); })[0];
+    if (botonAnio) {
+      if (botonAnio.getAttribute('aria-expanded') !== 'true') botonAnio.click();
+      botonAnio.closest('tr').scrollIntoView({ block: 'start' });
+    } else {
+      document.getElementById('temporadas').scrollIntoView();
+    }
+  }
 })();
