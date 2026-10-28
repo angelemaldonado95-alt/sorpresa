@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Rivalidad · El Monumento</title>
+<meta name="description" content="Sala de El Monumento dedicada a los más de dos mil juegos entre los Yankees de Nueva York y los Red Sox de Boston desde 1903.">
+<link rel="stylesheet" href="estilos.css">
+<script>
+  // Aplica el tema antes de pintar para evitar el destello.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('monumento-tema'); } catch (e) {}
+    if (t === 'claro' || t === 'oscuro') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  })();
+</script>
+</head>
+<body>
+
+<header class="cabecera" id="inicio">
+  <div class="cabecera__fila">
+    <a class="cabecera__volver" href="../index.html">&larr; El Monumento</a>
+    <button class="cabecera__tema" type="button" id="btn-tema" aria-pressed="false">Modo oscuro</button>
+  </div>
+  <p class="cabecera__sala">Sala de Nueva York y Boston</p>
+  <h1 class="cabecera__titulo">La Rivalidad</h1>
+  <p class="cabecera__sub">Todos los juegos entre los Yankees y los Red Sox desde 1903: la pizarra de cada uno, la cuenta de cada temporada y los momentos que la hicieron rivalidad.</p>
+</header>
+
+<nav class="nav" aria-label="Secciones de la sala">
+  <ul class="nav__lista">
+    <li><a href="#marcador">Marcador</a></li>
+    <li><a href="#ventaja">Ventaja</a></li>
+    <li><a href="#temporadas">Temporadas</a></li>
+    <li><a href="#momentos">Momentos</a></li>
+    <li><a href="#buscador">Buscador</a></li>
+    <li><a href="#fuentes">Fuentes</a></li>
+  </ul>
+</nav>
+
+<main class="contenido">
+
+  <p class="aviso-carga" id="aviso-carga" hidden>No se encontraron los datos de la sala. Verifica que la carpeta <code>data/</code> contenga <code>juegos.js</code>, <code>temporadas.js</code>, <code>resumen.js</code>, <code>parques.js</code> y <code>momentos.js</code>.</p>
+
+  <section class="seccion" id="marcador" aria-labelledby="marcador-titulo">
+    <h2 class="seccion__titulo" id="marcador-titulo">Marcador histórico</h2>
+    <div id="marcador-contenido"></div>
+  </section>
+
+  <section class="seccion" id="ventaja" aria-labelledby="ventaja-titulo">
+    <h2 class="seccion__titulo" id="ventaja-titulo">La ventaja, año con año</h2>
+    <p class="seccion__nota">Diferencia acumulada de victorias en temporada regular (Yankees menos Red Sox). Por encima de la línea del cero, la ventaja es de Nueva York; por debajo, de Boston. Pasa el cursor o usa las flechas del teclado para ver cada temporada.</p>
+    <div id="grafica-contenedor" class="grafica"></div>
+  </section>
+
+  <section class="seccion" id="temporadas" aria-labelledby="temporadas-titulo">
+    <h2 class="seccion__titulo" id="temporadas-titulo">Temporada por temporada</h2>
+    <p class="seccion__nota">Elige una década. Cada renglón se expande con la tabla de posiciones final y los juegos más cerrados y de más carreras del año.</p>
+    <div class="decadas" id="decadas" role="tablist" aria-label="Décadas"></div>
+    <div id="temporadas-contenido"></div>
+  </section>
+
+  <section class="seccion" id="momentos" aria-labelledby="momentos-titulo">
+    <h2 class="seccion__titulo" id="momentos-titulo">Momentos clave</h2>
+    <div id="momentos-contenido"></div>
+  </section>
+
+  <section class="seccion" id="buscador" aria-labelledby="buscador-titulo">
+    <h2 class="seccion__titulo" id="buscador-titulo">Buscador de juegos</h2>
+    <p class="seccion__nota">Busca por fecha exacta o por año. Si ese día no hubo juego entre los dos equipos, se muestran el anterior y el siguiente más cercanos.</p>
+    <form class="buscador" id="form-buscador">
+      <div class="buscador__campo">
+        <label for="b-fecha">Fecha</label>
+        <input type="date" id="b-fecha" name="fecha" min="1903-01-01" max="2026-12-31">
+      </div>
+      <div class="buscador__campo">
+        <label for="b-anio">Año</label>
+        <input type="number" id="b-anio" name="anio" min="1903" max="2026" inputmode="numeric" placeholder="1978">
+      </div>
+      <div class="buscador__campo">
+        <label for="b-tipo">Tipo</label>
+        <select id="b-tipo" name="tipo">
+          <option value="todos">Todos</option>
+          <option value="regular">Temporada regular</option>
+          <option value="post">Postemporada</option>
+        </select>
+      </div>
+      <div class="buscador__acciones">
+        <button type="submit" class="boton">Buscar</button>
+        <button type="button" class="boton boton--secundario" id="b-limpiar">Limpiar</button>
+      </div>
+    </form>
+    <div id="buscador-resultados" aria-live="polite"></div>
+  </section>
+
+</main>
+
+<footer class="pie" id="fuentes">
+  <h2 class="seccion__titulo">Fuentes</h2>
+  <div id="pie-fuentes"></div>
+  <blockquote class="pie__retrosheet" id="pie-retrosheet" lang="en"></blockquote>
+  <p class="pie__nota">No hay datos inventados en esta sala. Cada pizarra, marcador y tabla de posiciones proviene de las fuentes citadas; cuando un dato no está en ellas (asistencia, duración, jonrones de algún juego antiguo), se indica como no disponible en lugar de llenarse.</p>
+  <p class="pie__nota"><a href="../index.html">&larr; Volver a El Monumento</a></p>
+</footer>
+
+<dialog class="dialogo" id="dialogo-pizarra" aria-labelledby="dialogo-titulo">
+  <div class="dialogo__barra">
+    <p class="dialogo__titulo" id="dialogo-titulo">Pizarra</p>
+    <button type="button" class="dialogo__cerrar" id="dialogo-cerrar">Cerrar</button>
+  </div>
+  <div id="dialogo-contenido"></div>
+</dialog>
+
+<script src="data/parques.js"></script>
+<script src="data/resumen.js"></script>
+<script src="data/temporadas.js"></script>
+<script src="data/momentos.js"></script>
+<script src="data/juegos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
